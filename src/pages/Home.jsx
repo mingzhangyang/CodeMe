@@ -6,9 +6,16 @@ const Home = () => {
       <div className="container mx-auto px-4 py-16">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            CodeMe
-          </h1>
+          <div className="flex items-center justify-center mb-6">
+            <img 
+              src="/logo.svg" 
+              alt="CodeMe Logo" 
+              className="w-16 h-16 mr-4"
+            />
+            <h1 className="text-5xl font-bold text-gray-900">
+              CodeMe
+            </h1>
+          </div>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Create beautiful, personalized QR codes for your social profiles, websites, and more. 
             Share your digital presence with style.

@@ -38,7 +38,7 @@ const About = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8">
+          <div className="bg-white rounded-lg shadow-md p-8 mb-8">
             <h2 className="text-2xl font-semibold mb-4">Privacy & Security</h2>
             <p className="text-gray-600 mb-4">
               Your privacy is important to us. All QR code generation happens directly in your browser - 
@@ -47,6 +47,31 @@ const About = () => {
             <p className="text-gray-600">
               We don't track your QR code content or store any personal information without your consent.
             </p>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-8">
+            <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
+            <p className="text-gray-600 mb-4">
+              Have questions, feedback, or need support? We'd love to hear from you!
+            </p>
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <span className="text-blue-600 mr-3">📧</span>
+                <a 
+                  href="mailto:contact@orangely.xyz" 
+                  className="text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  contact@orangely.xyz
+                </a>
+              </div>
+              <div className="flex items-start">
+                <span className="text-blue-600 mr-3 mt-0.5">💡</span>
+                <p className="text-gray-600">
+                  Whether you have feature requests, bug reports, or just want to say hello, 
+                  we're here to help make CodeMe better for everyone.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

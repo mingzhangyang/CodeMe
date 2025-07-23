@@ -1,10 +1,23 @@
 import { useState } from 'react';
-import QRCodeCanvas from '../components/qr-generator/QRCodeCanvas';
+import AdvancedQRCanvas from '../components/qr-generator/AdvancedQRCanvas';
 import ContentInputs from '../components/qr-generator/ContentInputs';
+import StyleOptions from '../components/qr-generator/StyleOptions';
+import ExportOptions from '../components/qr-generator/ExportOptions';
 import useQRCode from '../hooks/useQRCode';
 
 const Generator = () => {
-  const { qrConfig, updateContent, updateContentType, updateColors } = useQRCode();
+  const {
+    qrConfig,
+    updateContent,
+    updateContentType,
+    updateColors,
+    updateSize,
+    updateErrorCorrectionLevel,
+    updateStyle,
+    updateLogo,
+    updateLogoSize,
+    resetConfig
+  } = useQRCode();
 
   const handleContentChange = (formattedContent) => {
     updateContent(formattedContent);
@@ -12,6 +25,10 @@ const Generator = () => {
 
   const handleContentTypeChange = (e) => {
     updateContentType(e.target.value);
+  };
+
+  const handleStyleChange = (property, value) => {
+    updateStyle(property, value);
   };
 
   return (
@@ -56,41 +73,14 @@ const Generator = () => {
               />
             </div>
 
-            {/* Basic Color Options */}
+            {/* Advanced Style Options */}
             <div className="mb-6">
-              <h3 className="text-lg font-medium text-gray-700 mb-3">Basic Colors</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Foreground Color
-                  </label>
-                  <input
-                    type="color"
-                    value={qrConfig.foregroundColor}
-                    onChange={(e) => updateColors(e.target.value, null)}
-                    className="w-full h-10 border border-gray-300 rounded cursor-pointer"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Background Color
-                  </label>
-                  <input
-                    type="color"
-                    value={qrConfig.backgroundColor}
-                    onChange={(e) => updateColors(null, e.target.value)}
-                    className="w-full h-10 border border-gray-300 rounded cursor-pointer"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Advanced Options Placeholder */}
-            <div className="mb-6">
-              <h3 className="text-lg font-medium text-gray-700 mb-3">Advanced Options</h3>
-              <p className="text-gray-500 text-sm">
-                Shape customization, logos, and templates coming in next phase
-              </p>
+              <StyleOptions 
+                qrConfig={qrConfig} 
+                onStyleChange={handleStyleChange}
+                onLogoChange={updateLogo}
+                onLogoSizeChange={updateLogoSize}
+              />
             </div>
           </div>
 
@@ -99,12 +89,19 @@ const Generator = () => {
             <h2 className="text-xl font-semibold mb-4">Preview</h2>
             
             <div className="flex items-center justify-center mb-6">
-              <QRCodeCanvas
+              <AdvancedQRCanvas
                 content={qrConfig.content || 'https://codeme.example.com'}
                 size={qrConfig.size}
                 backgroundColor={qrConfig.backgroundColor}
                 foregroundColor={qrConfig.foregroundColor}
                 errorCorrectionLevel={qrConfig.errorCorrectionLevel}
+                dotStyle={qrConfig.dotStyle}
+                cornerStyle={qrConfig.cornerStyle}
+                backgroundPattern={qrConfig.backgroundPattern}
+                gradientDirection={qrConfig.gradientDirection}
+                gradientEndColor={qrConfig.gradientEndColor}
+                logo={qrConfig.logo}
+                logoSize={qrConfig.logoSize}
               />
             </div>
 
@@ -116,14 +113,7 @@ const Generator = () => {
             </div>
 
             {/* Export Options */}
-            <div className="space-y-2">
-              <button className="btn-primary w-full">
-                Download PNG
-              </button>
-              <button className="btn-secondary w-full">
-                Download SVG
-              </button>
-            </div>
+            <ExportOptions qrConfig={qrConfig} />
           </div>
         </div>
       </div>

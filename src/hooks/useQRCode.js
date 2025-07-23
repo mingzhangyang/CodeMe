@@ -7,7 +7,16 @@ const useQRCode = () => {
     size: 256,
     backgroundColor: '#ffffff',
     foregroundColor: '#000000',
-    errorCorrectionLevel: 'M'
+    errorCorrectionLevel: 'M',
+    // Advanced styling options
+    dotStyle: 'square',
+    cornerStyle: 'square',
+    backgroundPattern: 'solid',
+    gradientDirection: 'diagonal',
+    gradientEndColor: '#000000',
+    // Logo options
+    logo: null,
+    logoSize: 0.2
   });
 
   const updateContent = (content) => {
@@ -34,6 +43,18 @@ const useQRCode = () => {
     setQrConfig(prev => ({ ...prev, errorCorrectionLevel: level }));
   };
 
+  const updateStyle = (property, value) => {
+    setQrConfig(prev => ({ ...prev, [property]: value }));
+  };
+
+  const updateLogo = (logo) => {
+    setQrConfig(prev => ({ ...prev, logo }));
+  };
+
+  const updateLogoSize = (logoSize) => {
+    setQrConfig(prev => ({ ...prev, logoSize }));
+  };
+
   const resetConfig = () => {
     setQrConfig({
       content: '',
@@ -41,7 +62,14 @@ const useQRCode = () => {
       size: 256,
       backgroundColor: '#ffffff',
       foregroundColor: '#000000',
-      errorCorrectionLevel: 'M'
+      errorCorrectionLevel: 'M',
+      dotStyle: 'square',
+      cornerStyle: 'square',
+      backgroundPattern: 'solid',
+      gradientDirection: 'diagonal',
+      gradientEndColor: '#000000',
+      logo: null,
+      logoSize: 0.2
     });
   };
 
@@ -52,6 +80,9 @@ const useQRCode = () => {
     updateColors,
     updateSize,
     updateErrorCorrectionLevel,
+    updateStyle,
+    updateLogo,
+    updateLogoSize,
     resetConfig
   };
 };
