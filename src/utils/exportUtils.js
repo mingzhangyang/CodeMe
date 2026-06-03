@@ -1,39 +1,39 @@
-import QRCode from 'qrcode';
+import { renderStyledQR } from './qrRenderer';
 
 /**
- * Export QR code as PNG
- * @param {string} content - QR code content
- * @param {Object} options - QR code options
- * @param {string} filename - Download filename
+ * Trigger a browser download for a Blob.
  */
-export const exportAsPNG = async (content, options = {}, filename = 'qrcode.png') => {
+const downloadBlob = (blob, filename) => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Render the fully styled QR code (shapes, gradient, logo) to an off-screen
+ * canvas at the requested export size. This is the same renderer the preview
+ * uses, so exports always match what the user sees.
+ */
+const renderToCanvas = async (qrConfig, size) => {
+  const canvas = document.createElement('canvas');
+  await renderStyledQR(canvas, { ...qrConfig, size });
+  return canvas;
+};
+
+/**
+ * Export the styled QR code as a PNG.
+ */
+export const exportAsPNG = async (qrConfig, size = 512, filename = 'qrcode.png') => {
   try {
-    const canvas = document.createElement('canvas');
-    const defaultOptions = {
-      width: 512,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#ffffff'
-      },
-      errorCorrectionLevel: 'M',
-      ...options
-    };
-
-    await QRCode.toCanvas(canvas, content, defaultOptions);
-    
-    // Convert canvas to blob and download
-    canvas.toBlob((blob) => {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }, 'image/png');
-
+    const canvas = await renderToCanvas(qrConfig, size);
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) throw new Error('Canvas is empty');
+    downloadBlob(blob, filename);
     return { success: true, message: 'PNG exported successfully' };
   } catch (error) {
     console.error('Error exporting PNG:', error);
@@ -42,38 +42,24 @@ export const exportAsPNG = async (content, options = {}, filename = 'qrcode.png'
 };
 
 /**
- * Export QR code as SVG
- * @param {string} content - QR code content
- * @param {Object} options - QR code options
- * @param {string} filename - Download filename
+ * Export the styled QR code as an SVG.
+ *
+ * The styling (custom dot shapes, gradients, embedded logo) is raster-drawn on
+ * a canvas, so the SVG embeds that rendering as a high-resolution image inside
+ * a scalable <svg> container. This keeps the export visually identical to the
+ * preview while remaining an .svg file that scales without pixelation.
  */
-export const exportAsSVG = async (content, options = {}, filename = 'qrcode.svg') => {
+export const exportAsSVG = async (qrConfig, size = 512, filename = 'qrcode.svg') => {
   try {
-    const defaultOptions = {
-      width: 512,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#ffffff'
-      },
-      errorCorrectionLevel: 'M',
-      type: 'svg',
-      ...options
-    };
-
-    const svgString = await QRCode.toString(content, defaultOptions);
-    
-    // Create blob and download
-    const blob = new Blob([svgString], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
+    const canvas = await renderToCanvas(qrConfig, size);
+    const dataUrl = canvas.toDataURL('image/png');
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" ` +
+      `viewBox="0 0 ${size} ${size}">` +
+      `<image width="${size}" height="${size}" href="${dataUrl}" ` +
+      `xlink:href="${dataUrl}" xmlns:xlink="http://www.w3.org/1999/xlink"/>` +
+      `</svg>`;
+    downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), filename);
     return { success: true, message: 'SVG exported successfully' };
   } catch (error) {
     console.error('Error exporting SVG:', error);
@@ -82,43 +68,28 @@ export const exportAsSVG = async (content, options = {}, filename = 'qrcode.svg'
 };
 
 /**
- * Export QR code as PDF (requires jsPDF)
- * For now, we'll create a simple PDF with the PNG image
- * @param {string} content - QR code content
- * @param {Object} options - QR code options
- * @param {string} filename - Download filename
+ * Export the styled QR code as a PDF, centered on an A4 page.
  */
-export const exportAsPDF = async (content, options = {}, filename = 'qrcode.pdf') => {
+export const exportAsPDF = async (qrConfig, size = 512, filename = 'qrcode.pdf') => {
   try {
-    // For PDF export, we'll create a canvas first, then convert to PDF
-    const canvas = document.createElement('canvas');
-    const defaultOptions = {
-      width: 512,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#ffffff'
-      },
-      errorCorrectionLevel: 'M',
-      ...options
-    };
-
-    await QRCode.toCanvas(canvas, content, defaultOptions);
-    
-    // Convert canvas to data URL
+    const canvas = await renderToCanvas(qrConfig, size);
     const dataURL = canvas.toDataURL('image/png');
-    
-    // Create a simple PDF using canvas and download
-    // For now, we'll create a basic implementation
-    // Later we can enhance this with jsPDF for better PDF formatting
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = filename.replace('.pdf', '.png'); // Fallback to PNG for now
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 
-    return { success: true, message: 'PDF exported successfully (as PNG for now)' };
+    // Load jsPDF on demand so it stays out of the initial bundle.
+    const { jsPDF } = await import('jspdf');
+    const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // Place the QR at a comfortable size, centered on the page.
+    const qrSize = Math.min(pageWidth, pageHeight) * 0.6;
+    const x = (pageWidth - qrSize) / 2;
+    const y = (pageHeight - qrSize) / 2;
+
+    pdf.addImage(dataURL, 'PNG', x, y, qrSize, qrSize);
+    pdf.save(filename);
+
+    return { success: true, message: 'PDF exported successfully' };
   } catch (error) {
     console.error('Error exporting PDF:', error);
     return { success: false, message: 'Failed to export PDF' };
@@ -134,9 +105,8 @@ export const exportAsPDF = async (content, options = {}, filename = 'qrcode.pdf'
 export const generateFilename = (content, extension) => {
   const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
   let baseName = 'qrcode';
-  
+
   if (content) {
-    // Extract meaningful part from content for filename
     if (content.startsWith('http')) {
       try {
         const url = new URL(content);
@@ -147,14 +117,13 @@ export const generateFilename = (content, extension) => {
     } else if (content.includes('BEGIN:VCARD')) {
       baseName = 'contact-card';
     } else if (content.length > 0) {
-      // Use first few words for text content
       baseName = content
         .substring(0, 20)
         .replace(/[^a-zA-Z0-9]/g, '-')
         .toLowerCase();
     }
   }
-  
+
   return `${baseName}-${timestamp}.${extension}`;
 };
 
@@ -175,15 +144,11 @@ export const getExportSizes = () => [
  */
 export const validateExportOptions = (options) => {
   const errors = [];
-  
+
   if (!options.width || options.width < 64 || options.width > 4096) {
     errors.push('Width must be between 64 and 4096 pixels');
   }
-  
-  if (options.margin < 0 || options.margin > 10) {
-    errors.push('Margin must be between 0 and 10');
-  }
-  
+
   return {
     isValid: errors.length === 0,
     errors

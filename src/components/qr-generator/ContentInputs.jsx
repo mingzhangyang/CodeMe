@@ -91,10 +91,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
       case 'url':
         return (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="ci-url" className="block text-sm font-medium text-gray-700 mb-2">
               Website URL
             </label>
             <input
+              id="ci-url"
               type="url"
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="https://example.com"
@@ -107,10 +108,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
       case 'text':
         return (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="ci-text" className="block text-sm font-medium text-gray-700 mb-2">
               Text Message
             </label>
             <textarea
+              id="ci-text"
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               rows="3"
               placeholder="Enter your message here..."
@@ -124,10 +126,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
         return (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="ci-platform" className="block text-sm font-medium text-gray-700 mb-2">
                 Social Platform
               </label>
               <select
+                id="ci-platform"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={formData.platform || ''}
                 onChange={(e) => handleInputChange('platform', e.target.value)}
@@ -145,10 +148,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
             
             {formData.platform && formData.platform !== 'custom' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="ci-username" className="block text-sm font-medium text-gray-700 mb-2">
                   Username
                 </label>
                 <input
+                  id="ci-username"
                   type="text"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="username"
@@ -160,10 +164,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
             
             {formData.platform === 'custom' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="ci-custom-url" className="block text-sm font-medium text-gray-700 mb-2">
                   Custom URL
                 </label>
                 <input
+                  id="ci-custom-url"
                   type="url"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="https://your-profile-url.com"
@@ -180,10 +185,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="ci-first-name" className="block text-sm font-medium text-gray-700 mb-2">
                   First Name
                 </label>
                 <input
+                  id="ci-first-name"
                   type="text"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="John"
@@ -192,10 +198,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="ci-last-name" className="block text-sm font-medium text-gray-700 mb-2">
                   Last Name
                 </label>
                 <input
+                  id="ci-last-name"
                   type="text"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Doe"
@@ -206,10 +213,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="ci-organization" className="block text-sm font-medium text-gray-700 mb-2">
                 Organization
               </label>
               <input
+                id="ci-organization"
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Company Name"
@@ -219,10 +227,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="ci-title" className="block text-sm font-medium text-gray-700 mb-2">
                 Job Title
               </label>
               <input
+                id="ci-title"
                 type="text"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Software Developer"
@@ -233,10 +242,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="ci-phone" className="block text-sm font-medium text-gray-700 mb-2">
                   Phone
                 </label>
                 <input
+                  id="ci-phone"
                   type="tel"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="+1 (555) 123-4567"
@@ -245,10 +255,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="ci-email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email
                 </label>
                 <input
+                  id="ci-email"
                   type="email"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="john@example.com"
@@ -259,10 +270,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="ci-website" className="block text-sm font-medium text-gray-700 mb-2">
                 Website
               </label>
               <input
+                id="ci-website"
                 type="url"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="https://johndoe.com"
@@ -272,10 +284,11 @@ const ContentInputs = ({ contentType, onContentChange }) => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="ci-address" className="block text-sm font-medium text-gray-700 mb-2">
                 Address
               </label>
               <textarea
+                id="ci-address"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows="2"
                 placeholder="123 Main St, City, State 12345"

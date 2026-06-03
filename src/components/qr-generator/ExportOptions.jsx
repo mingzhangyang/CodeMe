@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { exportAsPNG, exportAsSVG, exportAsPDF, generateFilename, getExportSizes, validateExportOptions } from '../../utils/exportUtils';
+import { getEffectiveErrorCorrectionLevel } from '../../utils/qrRenderer';
 
 const ExportOptions = ({ qrConfig }) => {
   const [exportSize, setExportSize] = useState(512);
@@ -16,18 +17,8 @@ const ExportOptions = ({ qrConfig }) => {
     setExportStatus(null);
 
     try {
-      const options = {
-        width: exportSize,
-        margin: 2,
-        color: {
-          dark: qrConfig.foregroundColor,
-          light: qrConfig.backgroundColor
-        },
-        errorCorrectionLevel: qrConfig.errorCorrectionLevel
-      };
-
-      // Validate options
-      const validation = validateExportOptions(options);
+      // Validate the chosen export dimensions.
+      const validation = validateExportOptions({ width: exportSize });
       if (!validation.isValid) {
         setExportStatus({ type: 'error', message: validation.errors.join(', ') });
         setIsExporting(false);
@@ -39,13 +30,13 @@ const ExportOptions = ({ qrConfig }) => {
 
       switch (format) {
         case 'png':
-          result = await exportAsPNG(qrConfig.content, options, filename);
+          result = await exportAsPNG(qrConfig, exportSize, filename);
           break;
         case 'svg':
-          result = await exportAsSVG(qrConfig.content, options, filename);
+          result = await exportAsSVG(qrConfig, exportSize, filename);
           break;
         case 'pdf':
-          result = await exportAsPDF(qrConfig.content, options, filename);
+          result = await exportAsPDF(qrConfig, exportSize, filename);
           break;
         default:
           throw new Error('Unsupported format');
@@ -70,10 +61,11 @@ const ExportOptions = ({ qrConfig }) => {
     <div className="space-y-4">
       {/* Size Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="export-size" className="block text-sm font-medium text-gray-700 mb-2">
           Export Size
         </label>
         <select
+          id="export-size"
           value={exportSize}
           onChange={(e) => setExportSize(Number(e.target.value))}
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -156,7 +148,10 @@ const ExportOptions = ({ qrConfig }) => {
           <div className="text-xs text-gray-600 space-y-1">
             <p><strong>Content Type:</strong> {qrConfig.contentType}</p>
             <p><strong>Size:</strong> {exportSize}x{exportSize}px</p>
-            <p><strong>Error Correction:</strong> {qrConfig.errorCorrectionLevel}</p>
+            <p>
+              <strong>Error Correction:</strong> {getEffectiveErrorCorrectionLevel(qrConfig)}
+              {qrConfig.logo && qrConfig.logo.url ? ' (boosted for logo)' : ''}
+            </p>
             <p><strong>Colors:</strong> {qrConfig.foregroundColor} / {qrConfig.backgroundColor}</p>
           </div>
         </div>

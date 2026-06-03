@@ -179,6 +179,21 @@ const StyleOptions = ({ qrConfig, onStyleChange, onLogoChange, onLogoSizeChange 
                   </button>
                 ))}
               </div>
+
+              {(qrConfig.dotStyle === 'circle' || qrConfig.dotStyle === 'diamond') && (
+                <div className="mt-3 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+                  <span aria-hidden="true">⚠️</span>
+                  <p>
+                    <span className="font-medium">Heads up:</span> the
+                    {qrConfig.dotStyle === 'circle' ? ' Circle' : ' Diamond'} dot
+                    style can be harder for some scanners to read, especially at
+                    larger sizes. For the most reliable codes, use{' '}
+                    <span className="font-medium">Square</span> or{' '}
+                    <span className="font-medium">Rounded</span> — and always test
+                    your QR code before sharing it.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div>
@@ -298,8 +313,8 @@ const StyleOptions = ({ qrConfig, onStyleChange, onLogoChange, onLogoSizeChange 
     <div className="space-y-4">
       <h3 className="text-lg font-medium text-gray-700">Advanced Styling</h3>
       
-      {/* Tab Navigation */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+      {/* Tab Navigation - horizontally scrollable on small screens */}
+      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg overflow-x-auto no-scrollbar">
         {[
           { id: 'colors', label: 'Colors', icon: '🎨' },
           { id: 'shapes', label: 'Shapes', icon: '🔷' },
@@ -310,7 +325,7 @@ const StyleOptions = ({ qrConfig, onStyleChange, onLogoChange, onLogoSizeChange 
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-colors ${
+            className={`flex-shrink-0 sm:flex-1 py-2 px-3 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${
               activeTab === tab.id
                 ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'

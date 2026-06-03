@@ -1,0 +1,34 @@
+# CodeMe
+
+> CodeMe is a free, privacy-first web app for generating beautiful, personalized QR codes. Users can create QR codes for website URLs, plain text, social media profiles, and vCard contact cards, customize colors, gradients, shapes, and an embedded logo, preview changes in real time, and export to PNG, SVG, or PDF. All generation happens locally in the browser — no account or server upload is required.
+
+## Key facts
+
+- Name: CodeMe (Personalized QR Code Generator)
+- Website: https://codeme.orangely.xyz
+- Price: Free, no sign-up required
+- Privacy: QR codes are generated entirely client-side; user content never leaves the device
+- Maker: Orangely (contact@orangely.xyz)
+- Tech: React + Vite single-page app, Tailwind CSS; intended for deployment on Cloudflare Pages
+
+## Features
+
+- Content types: website URL, text message, social profile (Instagram, Twitter/X, LinkedIn, TikTok, YouTube, GitHub), and vCard contact card (name, organization, title, phone, email, website, address)
+- Styling: foreground/background colors, gradient backgrounds and directions, dot shapes (square, circle, rounded, diamond), corner shapes (square, circle, rounded), and style presets (Classic, Modern, Playful, Professional)
+- Logo embedding: upload an image (PNG, JPG, SVG up to 5MB) and control its size (15%–30%)
+- Real-time preview rendered on an HTML canvas
+- Export formats: PNG (web and social), SVG (scalable vector), and PDF (print), at multiple sizes
+- Error correction levels for reliable scanning
+
+## Pages
+
+- [Home](https://codeme.orangely.xyz/): Product overview and call to action.
+- [Generator](https://codeme.orangely.xyz/generator): The core tool for creating and customizing QR codes.
+- [About](https://codeme.orangely.xyz/about): What CodeMe is, how to use it, privacy details, and contact information.
+
+## Common questions
+
+- Is it free? Yes, completely free with no sign-up.
+- Can I add a logo? Yes, you can embed and resize a centered logo or avatar.
+- What can I download? PNG, SVG, or PDF at multiple sizes.
+- Is my data private? Yes, everything runs in your browser and your content is never uploaded.

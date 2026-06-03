@@ -1,0 +1,4 @@
+# Cloudflare Pages SPA fallback: serve the app for client-side routes
+# so deep links like /generator and /about resolve (and are crawlable)
+# instead of returning 404. Real static assets are served before this rule.
+/*    /index.html   200

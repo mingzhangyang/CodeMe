@@ -1,22 +1,26 @@
-import { useState } from 'react';
 import AdvancedQRCanvas from '../components/qr-generator/AdvancedQRCanvas';
 import ContentInputs from '../components/qr-generator/ContentInputs';
 import StyleOptions from '../components/qr-generator/StyleOptions';
 import ExportOptions from '../components/qr-generator/ExportOptions';
 import useQRCode from '../hooks/useQRCode';
+import useDocumentMeta from '../hooks/useDocumentMeta';
+import useDebounce from '../hooks/useDebounce';
 
 const Generator = () => {
+  useDocumentMeta({
+    title: 'QR Code Generator — Customize & Download | CodeMe',
+    description:
+      'Generate a personalized QR code for a URL, text, social profile, or contact card. Customize colors, shapes, and logo, preview in real time, and download as PNG, SVG, or PDF.',
+    path: '/generator'
+  });
+
   const {
     qrConfig,
     updateContent,
     updateContentType,
-    updateColors,
-    updateSize,
-    updateErrorCorrectionLevel,
     updateStyle,
     updateLogo,
-    updateLogoSize,
-    resetConfig
+    updateLogoSize
   } = useQRCode();
 
   const handleContentChange = (formattedContent) => {
@@ -31,11 +35,14 @@ const Generator = () => {
     updateStyle(property, value);
   };
 
+  // Debounce the content so the preview doesn't re-render on every keystroke.
+  const previewContent = useDebounce(qrConfig.content, 300);
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
             QR Code Generator
           </h1>
           <p className="text-gray-600">
@@ -43,17 +50,18 @@ const Generator = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
           {/* Left Panel - Controls */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
             <h2 className="text-xl font-semibold mb-4">Customize Your QR Code</h2>
             
             {/* Content Type Selection */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="content-type" className="block text-sm font-medium text-gray-700 mb-2">
                 Content Type
               </label>
-              <select 
+              <select
+                id="content-type"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={qrConfig.contentType}
                 onChange={handleContentTypeChange}
@@ -85,12 +93,12 @@ const Generator = () => {
           </div>
 
           {/* Right Panel - Preview */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 lg:sticky lg:top-20 lg:self-start">
             <h2 className="text-xl font-semibold mb-4">Preview</h2>
-            
+
             <div className="flex items-center justify-center mb-6">
               <AdvancedQRCanvas
-                content={qrConfig.content || 'https://codeme.example.com'}
+                content={previewContent || 'https://codeme.orangely.xyz'}
                 size={qrConfig.size}
                 backgroundColor={qrConfig.backgroundColor}
                 foregroundColor={qrConfig.foregroundColor}
