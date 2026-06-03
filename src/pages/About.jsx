@@ -1,13 +1,13 @@
 const About = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-12 sm:py-16">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-8 text-center">
             About CodeMe
           </h1>
-          
-          <div className="bg-white rounded-lg shadow-md p-8 mb-8">
+
+          <div className="bg-white rounded-lg shadow-md p-6 sm:p-8 mb-8">
             <h2 className="text-2xl font-semibold mb-4">What is CodeMe?</h2>
             <p className="text-gray-600 mb-4">
               CodeMe is a modern, user-friendly QR code generator designed for creators, 
@@ -16,7 +16,7 @@ const About = () => {
             </p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8 mb-8">
+          <div className="bg-white rounded-lg shadow-md p-6 sm:p-8 mb-8">
             <h2 className="text-2xl font-semibold mb-4">How to Use</h2>
             <div className="space-y-4">
               <div className="flex items-start">
@@ -38,7 +38,7 @@ const About = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8 mb-8">
+          <div className="bg-white rounded-lg shadow-md p-6 sm:p-8 mb-8">
             <h2 className="text-2xl font-semibold mb-4">Privacy & Security</h2>
             <p className="text-gray-600 mb-4">
               Your privacy is important to us. All QR code generation happens directly in your browser - 
@@ -49,7 +49,7 @@ const About = () => {
             </p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-8">
+          <div className="bg-white rounded-lg shadow-md p-6 sm:p-8">
             <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
             <p className="text-gray-600 mb-4">
               Have questions, feedback, or need support? We'd love to hear from you!
