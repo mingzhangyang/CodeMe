@@ -136,7 +136,7 @@ const LogoUpload = ({ currentLogo, logoSize, onLogoChange, onLogoSizeChange }) =
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
-                  {currentLogo.name}
+                  {currentLogo.file?.name || 'Uploaded logo'}
                 </p>
                 <p className="text-sm text-gray-500">
                   {currentLogo.width} × {currentLogo.height}px
@@ -161,10 +161,11 @@ const LogoUpload = ({ currentLogo, logoSize, onLogoChange, onLogoSizeChange }) =
 
       {currentLogo && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="logo-size" className="block text-sm font-medium text-gray-700 mb-2">
             Logo Size
           </label>
           <select
+            id="logo-size"
             value={logoSize}
             onChange={(e) => onLogoSizeChange(Number(e.target.value))}
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"

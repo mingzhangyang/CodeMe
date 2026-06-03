@@ -4,6 +4,7 @@ import StyleOptions from '../components/qr-generator/StyleOptions';
 import ExportOptions from '../components/qr-generator/ExportOptions';
 import useQRCode from '../hooks/useQRCode';
 import useDocumentMeta from '../hooks/useDocumentMeta';
+import useDebounce from '../hooks/useDebounce';
 
 const Generator = () => {
   useDocumentMeta({
@@ -34,6 +35,9 @@ const Generator = () => {
     updateStyle(property, value);
   };
 
+  // Debounce the content so the preview doesn't re-render on every keystroke.
+  const previewContent = useDebounce(qrConfig.content, 300);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-6 sm:py-8">
@@ -53,10 +57,11 @@ const Generator = () => {
             
             {/* Content Type Selection */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="content-type" className="block text-sm font-medium text-gray-700 mb-2">
                 Content Type
               </label>
-              <select 
+              <select
+                id="content-type"
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={qrConfig.contentType}
                 onChange={handleContentTypeChange}
@@ -93,7 +98,7 @@ const Generator = () => {
 
             <div className="flex items-center justify-center mb-6">
               <AdvancedQRCanvas
-                content={qrConfig.content || 'https://codeme.example.com'}
+                content={previewContent || 'https://codeme.orangely.xyz'}
                 size={qrConfig.size}
                 backgroundColor={qrConfig.backgroundColor}
                 foregroundColor={qrConfig.foregroundColor}
