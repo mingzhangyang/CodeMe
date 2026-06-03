@@ -179,6 +179,21 @@ const StyleOptions = ({ qrConfig, onStyleChange, onLogoChange, onLogoSizeChange 
                   </button>
                 ))}
               </div>
+
+              {(qrConfig.dotStyle === 'circle' || qrConfig.dotStyle === 'diamond') && (
+                <div className="mt-3 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+                  <span aria-hidden="true">⚠️</span>
+                  <p>
+                    <span className="font-medium">Heads up:</span> the
+                    {qrConfig.dotStyle === 'circle' ? ' Circle' : ' Diamond'} dot
+                    style can be harder for some scanners to read, especially at
+                    larger sizes. For the most reliable codes, use{' '}
+                    <span className="font-medium">Square</span> or{' '}
+                    <span className="font-medium">Rounded</span> — and always test
+                    your QR code before sharing it.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div>

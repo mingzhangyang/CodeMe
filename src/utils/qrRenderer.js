@@ -68,15 +68,23 @@ export const renderStyledQR = async (canvas, config) => {
   const margin = Math.round(size * 0.08);
   const moduleSize = (size - margin * 2) / moduleCount;
 
+  // Draw data modules with the chosen dot style, skipping the three finder
+  // patterns — those are drawn separately as solid, gapless shapes so the
+  // code stays reliably scannable regardless of styling.
   for (let row = 0; row < moduleCount; row++) {
     for (let col = 0; col < moduleCount; col++) {
       if (!data[row * moduleCount + col]) continue;
+      if (isFinderRegion(row, col, moduleCount)) continue;
       const x = margin + col * moduleSize;
       const y = margin + row * moduleSize;
-      const style = isCornerPattern(row, col, moduleCount) ? cornerStyle : dotStyle;
-      drawModule(ctx, x, y, moduleSize, foregroundColor, style);
+      drawModule(ctx, x, y, moduleSize, foregroundColor, dotStyle);
     }
   }
+
+  // Finder patterns (top-left, top-right, bottom-left).
+  drawFinder(ctx, margin, margin, moduleSize, foregroundColor, cornerStyle);
+  drawFinder(ctx, margin + (moduleCount - 7) * moduleSize, margin, moduleSize, foregroundColor, cornerStyle);
+  drawFinder(ctx, margin, margin + (moduleCount - 7) * moduleSize, moduleSize, foregroundColor, cornerStyle);
 
   if (logo && logo.url) {
     await drawLogo(ctx, size, logo, logoSize);
@@ -171,13 +179,52 @@ const drawRoundedRect = (ctx, x, y, width, height, radius) => {
   ctx.fill();
 };
 
-const isCornerPattern = (row, col, moduleCount) => {
+const isFinderRegion = (row, col, moduleCount) => {
   // The three finder patterns occupy 7x7 modules in each corner (except
-  // bottom-right). Treat that region as "corner" so it uses cornerStyle.
+  // bottom-right). These are drawn separately, so skip them in the data loop.
   const isTopLeft = row < 7 && col < 7;
   const isTopRight = row < 7 && col >= moduleCount - 7;
   const isBottomLeft = row >= moduleCount - 7 && col < 7;
   return isTopLeft || isTopRight || isBottomLeft;
+};
+
+/**
+ * Draw a single 7x7 finder pattern as solid, gapless shapes: an outer ring
+ * (1 module thick) plus a 3x3 center dot. Drawing it as unified shapes — rather
+ * than per-module with the dot style — preserves the finder geometry that QR
+ * scanners rely on, so styled codes remain detectable.
+ *
+ * @param {string} style - 'square' for sharp corners, anything else (rounded /
+ *   circle) for a softly rounded frame and dot.
+ */
+const drawFinder = (ctx, x, y, moduleSize, color, style) => {
+  const outer = moduleSize * 7;
+  const innerHole = moduleSize * 5;
+  const center = moduleSize * 3;
+  const rounded = style !== 'square';
+
+  ctx.fillStyle = color;
+
+  // Outer ring drawn via even-odd fill so the hole shows the background
+  // through (works over gradients without re-filling the background color).
+  ctx.beginPath();
+  if (rounded) {
+    ctx.roundRect(x, y, outer, outer, moduleSize * 1.75);
+    ctx.roundRect(x + moduleSize, y + moduleSize, innerHole, innerHole, moduleSize * 1.1);
+  } else {
+    ctx.rect(x, y, outer, outer);
+    ctx.rect(x + moduleSize, y + moduleSize, innerHole, innerHole);
+  }
+  ctx.fill('evenodd');
+
+  // Center 3x3 dot.
+  ctx.beginPath();
+  if (rounded) {
+    ctx.roundRect(x + moduleSize * 2, y + moduleSize * 2, center, center, moduleSize * 0.85);
+  } else {
+    ctx.rect(x + moduleSize * 2, y + moduleSize * 2, center, center);
+  }
+  ctx.fill();
 };
 
 const adjustColorOpacity = (color, opacity) => {
