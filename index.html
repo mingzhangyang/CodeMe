@@ -3,12 +3,153 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="apple-touch-icon" href="/logo.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#2563eb" />
-    <meta name="description" content="Create beautiful, personalized QR codes for your social profiles, websites, and more." />
+
+    <!-- Primary meta tags -->
+    <title>CodeMe — Free Personalized QR Code Generator (PNG, SVG, PDF)</title>
+    <meta
+      name="description"
+      content="CodeMe is a free, privacy-first QR code generator. Create beautiful, custom QR codes for social profiles, websites, text, and contact cards — add a logo, choose colors and shapes, and export to PNG, SVG, or PDF. Runs entirely in your browser, no sign-up required."
+    />
+    <meta
+      name="keywords"
+      content="QR code generator, custom QR code, QR code with logo, free QR code, vCard QR code, social media QR code, PNG QR code, SVG QR code, PDF QR code, personalized QR code"
+    />
+    <meta name="author" content="Orangely" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://codeme.orangely.xyz/" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="CodeMe" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <title>CodeMe - QR Image Generator</title>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CodeMe" />
+    <meta property="og:url" content="https://codeme.orangely.xyz/" />
+    <meta property="og:title" content="CodeMe — Free Personalized QR Code Generator" />
+    <meta
+      property="og:description"
+      content="Create beautiful, custom QR codes for social profiles, websites, and contact cards. Add a logo, pick colors and shapes, and export to PNG, SVG, or PDF — free and in your browser."
+    />
+    <meta property="og:image" content="https://codeme.orangely.xyz/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="CodeMe — Personalized QR Code Generator" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CodeMe — Free Personalized QR Code Generator" />
+    <meta
+      name="twitter:description"
+      content="Create beautiful, custom QR codes for social profiles, websites, and contact cards. Export to PNG, SVG, or PDF — free and in your browser."
+    />
+    <meta name="twitter:image" content="https://codeme.orangely.xyz/og-image.png" />
+    <meta name="twitter:image:alt" content="CodeMe — Personalized QR Code Generator" />
+
+    <!-- Structured data for search engines and LLMs -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "@id": "https://codeme.orangely.xyz/#webapp",
+            "name": "CodeMe",
+            "url": "https://codeme.orangely.xyz/",
+            "description": "A free, privacy-first QR code generator for creating beautiful, personalized QR codes for social profiles, websites, text, and contact cards. Customize colors, shapes, and logos, then export to PNG, SVG, or PDF.",
+            "applicationCategory": "DesignApplication",
+            "operatingSystem": "Any (web browser)",
+            "browserRequirements": "Requires JavaScript. Works in all modern browsers.",
+            "inLanguage": "en",
+            "isAccessibleForFree": true,
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "featureList": [
+              "Generate QR codes for URLs, text, social profiles, and vCard contact cards",
+              "Customize foreground, background, and gradient colors",
+              "Choose dot and corner shapes (square, circle, rounded, diamond)",
+              "Embed a logo or avatar in the center of the QR code",
+              "Real-time preview as you design",
+              "Export to PNG, SVG, and PDF at multiple sizes",
+              "Runs entirely in the browser — no sign-up and no data leaves your device"
+            ],
+            "creator": {
+              "@type": "Organization",
+              "name": "Orangely",
+              "url": "https://codeme.orangely.xyz/",
+              "email": "contact@orangely.xyz"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://codeme.orangely.xyz/#website",
+            "url": "https://codeme.orangely.xyz/",
+            "name": "CodeMe",
+            "description": "Free personalized QR code generator.",
+            "inLanguage": "en",
+            "publisher": {
+              "@type": "Organization",
+              "name": "Orangely",
+              "email": "contact@orangely.xyz"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://codeme.orangely.xyz/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Is CodeMe free to use?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. CodeMe is completely free, with no sign-up required. QR codes are generated directly in your browser."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What types of QR codes can I create?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "You can create QR codes for website URLs, plain text, social media profiles (Instagram, Twitter/X, LinkedIn, TikTok, YouTube, GitHub), and vCard contact cards with name, phone, email, and address."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can I add a logo and customize the design?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. You can embed a logo or avatar in the center, change foreground and background colors, apply gradients, and choose dot and corner shapes such as square, circle, rounded, and diamond."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What formats can I download?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "You can export your QR code as PNG, SVG, or PDF at multiple sizes suitable for web, social media, and print."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is my data private?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. All QR code generation happens locally in your browser. Your content never leaves your device unless you explicitly choose to."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-87LH7B0GTQ"></script>
     <script>
@@ -20,7 +161,34 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Fallback content for crawlers and clients without JavaScript -->
+      <noscript>
+        <main style="max-width: 720px; margin: 0 auto; padding: 2rem; font-family: system-ui, sans-serif;">
+          <h1>CodeMe — Free Personalized QR Code Generator</h1>
+          <p>
+            CodeMe is a free, privacy-first QR code generator. Create beautiful, custom QR
+            codes for your social profiles, websites, text, and contact cards. Customize
+            colors, shapes, and add your logo, then export to PNG, SVG, or PDF — all in your
+            browser, with no sign-up required.
+          </p>
+          <h2>What you can do</h2>
+          <ul>
+            <li>Generate QR codes for URLs, text, social profiles, and vCard contact cards</li>
+            <li>Customize colors, gradients, and dot and corner shapes</li>
+            <li>Embed a logo or avatar in the center of your QR code</li>
+            <li>Preview in real time and export to PNG, SVG, or PDF</li>
+          </ul>
+          <h2>Pages</h2>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/generator">QR Code Generator</a></li>
+            <li><a href="/about">About CodeMe</a></li>
+          </ul>
+          <p>This application requires JavaScript to run interactively. Please enable JavaScript in your browser.</p>
+        </main>
+      </noscript>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

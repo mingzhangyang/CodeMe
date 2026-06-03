@@ -3,8 +3,16 @@ import ContentInputs from '../components/qr-generator/ContentInputs';
 import StyleOptions from '../components/qr-generator/StyleOptions';
 import ExportOptions from '../components/qr-generator/ExportOptions';
 import useQRCode from '../hooks/useQRCode';
+import useDocumentMeta from '../hooks/useDocumentMeta';
 
 const Generator = () => {
+  useDocumentMeta({
+    title: 'QR Code Generator — Customize & Download | CodeMe',
+    description:
+      'Generate a personalized QR code for a URL, text, social profile, or contact card. Customize colors, shapes, and logo, preview in real time, and download as PNG, SVG, or PDF.',
+    path: '/generator'
+  });
+
   const {
     qrConfig,
     updateContent,

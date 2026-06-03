@@ -1,0 +1,20 @@
+{
+  "name": "CodeMe — Personalized QR Code Generator",
+  "short_name": "CodeMe",
+  "description": "Create beautiful, personalized QR codes for your social profiles, websites, and contact cards. Export to PNG, SVG, or PDF — free and in your browser.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#2563eb",
+  "lang": "en",
+  "categories": ["productivity", "utilities", "design"],
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,4 +1,13 @@
+import useDocumentMeta from '../hooks/useDocumentMeta';
+
 const About = () => {
+  useDocumentMeta({
+    title: 'About CodeMe — Free, Private QR Code Generator',
+    description:
+      'Learn about CodeMe, a free and privacy-first QR code generator. See how to create custom QR codes in four steps, how your data stays in your browser, and how to get in touch.',
+    path: '/about'
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-12 sm:py-16">

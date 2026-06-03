@@ -1,6 +1,14 @@
 import { Link } from 'react-router-dom';
+import useDocumentMeta from '../hooks/useDocumentMeta';
 
 const Home = () => {
+  useDocumentMeta({
+    title: 'CodeMe — Free Personalized QR Code Generator (PNG, SVG, PDF)',
+    description:
+      'Create beautiful, custom QR codes for your social profiles, websites, text, and contact cards. Add a logo, choose colors and shapes, and export to PNG, SVG, or PDF — free and in your browser.',
+    path: '/'
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="container mx-auto px-4 py-12 sm:py-16">
