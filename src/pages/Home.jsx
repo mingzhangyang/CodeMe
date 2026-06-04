@@ -37,7 +37,7 @@ const Home = () => {
         </div>
 
         {/* Features Preview */}
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
           <div className="text-center p-6 bg-white rounded-lg shadow-md">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🎨</span>

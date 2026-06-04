@@ -50,9 +50,9 @@ const Generator = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
           {/* Left Panel - Controls */}
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 min-w-0">
             <h2 className="text-xl font-semibold mb-4">Customize Your QR Code</h2>
             
             {/* Content Type Selection */}
@@ -93,7 +93,7 @@ const Generator = () => {
           </div>
 
           {/* Right Panel - Preview */}
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 lg:sticky lg:top-20 lg:self-start">
+          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 min-w-0 lg:sticky lg:top-20 lg:self-start">
             <h2 className="text-xl font-semibold mb-4">Preview</h2>
 
             <div className="flex items-center justify-center mb-6">
