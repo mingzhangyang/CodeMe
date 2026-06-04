@@ -6,6 +6,11 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Guard against accidental horizontal overflow expanding the layout
+     viewport on iOS (the documentElement is the scroll container there).
+     `clip` clips without creating a scroll container, so position: sticky
+     keeps working. */
+  overflow-x: clip;
 }
 
 body {
