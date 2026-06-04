@@ -104,7 +104,7 @@ const StyleOptions = ({ qrConfig, onStyleChange, onLogoChange, onLogoSizeChange 
                     type="text"
                     value={qrConfig.foregroundColor || '#000000'}
                     onChange={(e) => handleStyleUpdate('foregroundColor', e.target.value)}
-                    className="flex-1 p-2 border border-gray-300 rounded text-sm"
+                    className="flex-1 min-w-0 p-2 border border-gray-300 rounded text-sm"
                     placeholder="#000000"
                   />
                 </div>
@@ -124,7 +124,7 @@ const StyleOptions = ({ qrConfig, onStyleChange, onLogoChange, onLogoSizeChange 
                     type="text"
                     value={qrConfig.backgroundColor || '#ffffff'}
                     onChange={(e) => handleStyleUpdate('backgroundColor', e.target.value)}
-                    className="flex-1 p-2 border border-gray-300 rounded text-sm"
+                    className="flex-1 min-w-0 p-2 border border-gray-300 rounded text-sm"
                     placeholder="#ffffff"
                   />
                 </div>
@@ -147,7 +147,7 @@ const StyleOptions = ({ qrConfig, onStyleChange, onLogoChange, onLogoSizeChange 
                     type="text"
                     value={qrConfig.gradientEndColor || '#000000'}
                     onChange={(e) => handleStyleUpdate('gradientEndColor', e.target.value)}
-                    className="flex-1 p-2 border border-gray-300 rounded text-sm"
+                    className="flex-1 min-w-0 p-2 border border-gray-300 rounded text-sm"
                     placeholder="#000000"
                   />
                 </div>
