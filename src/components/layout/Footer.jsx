@@ -1,35 +1,27 @@
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white py-8 mt-auto">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-          <div className="mb-4 md:mb-0">
-            <p className="text-sm text-gray-300">
-              © 2025 Orangely. All rights reserved.
-            </p>
+    <footer className="bg-gray-900 text-white mt-auto">
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col items-center gap-3 text-sm text-gray-400 md:flex-row md:justify-between md:gap-4">
+          {/* Brand + copyright */}
+          <div className="flex flex-col items-center gap-1 text-center sm:flex-row sm:gap-2 md:text-left">
+            <span className="text-gray-300">
+              © 2025 <span className="font-semibold text-white">Orangely</span>
+            </span>
+            <span className="hidden text-gray-600 sm:inline" aria-hidden="true">·</span>
+            <span>CodeMe — Personalized QR Code Generator</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
-            <a 
-              href="mailto:contact@orangely.xyz" 
-              className="text-gray-300 hover:text-white transition-colors text-sm"
+          {/* Contact + credit */}
+          <div className="flex flex-col items-center gap-1 text-center sm:flex-row sm:gap-3 md:text-right">
+            <a
+              href="mailto:contact@orangely.xyz"
+              className="text-gray-300 transition-colors hover:text-white"
             >
-              📧 contact@orangely.xyz
+              contact@orangely.xyz
             </a>
-            <div className="text-gray-500 text-sm">
-              Made with ❤️ for creators
-            </div>
-          </div>
-        </div>
-        
-        <div className="mt-6 pt-6 border-t border-gray-700">
-          <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
-            <p>
-              CodeMe - Personalized QR Code Generator
-            </p>
-            <p className="mt-2 md:mt-0">
-              Generate beautiful QR codes with style
-            </p>
+            <span className="hidden text-gray-600 sm:inline" aria-hidden="true">·</span>
+            <span>Made with ❤️ for creators</span>
           </div>
         </div>
       </div>
