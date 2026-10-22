@@ -69,6 +69,9 @@ const useQRHistory = () => {
     const { config: stored, logoOmitted } = serializeConfig(config);
     const signature = designSignature(stored);
     setItems((prev) => {
+      const sameDesign = (item) =>
+        item.signature === signature &&
+        (item.config?.logo?.url || null) === (stored.logo?.url || null);
       const next = [
         {
           id: `${Date.now()}`,
@@ -77,7 +80,7 @@ const useQRHistory = () => {
           logoOmitted,
           config: stored
         },
-        ...prev.filter((item) => item.signature !== signature)
+        ...prev.filter((item) => !sameDesign(item))
       ].slice(0, MAX_ITEMS);
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(next));

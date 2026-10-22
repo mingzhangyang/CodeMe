@@ -6,18 +6,18 @@ const parseSocial = (content) => {
   }
 
   const rules = [
-    [/instagram\.com\/([^/?#]+)/i, 'instagram'],
-    [/(?:twitter\.com|x\.com)\/([^/?#]+)/i, 'twitter'],
-    [/linkedin\.com\/in\/([^/?#]+)/i, 'linkedin'],
-    [/tiktok\.com\/@?([^/?#]+)/i, 'tiktok'],
-    [/youtube\.com\/@([^/?#]+)/i, 'youtube'],
-    [/github\.com\/([^/?#]+)/i, 'github'],
-    [/xiaohongshu\.com\/user\/profile\/([^/?#]+)/i, 'xiaohongshu']
+    [/^https?:\/\/(?:www\.)?instagram\.com\/([^/?#]+)\/?$/i, 'instagram'],
+    [/^https?:\/\/(?:www\.)?(?:twitter\.com|x\.com)\/([^/?#]+)\/?$/i, 'twitter'],
+    [/^https?:\/\/(?:www\.)?linkedin\.com\/in\/([^/?#]+)\/?$/i, 'linkedin'],
+    [/^https?:\/\/(?:www\.)?tiktok\.com\/@?([^/?#]+)\/?$/i, 'tiktok'],
+    [/^https?:\/\/(?:www\.)?youtube\.com\/@([^/?#]+)\/?$/i, 'youtube'],
+    [/^https?:\/\/(?:www\.)?github\.com\/([^/?#]+)\/?$/i, 'github'],
+    [/^https?:\/\/(?:www\.)?xiaohongshu\.com\/user\/profile\/([^/?#]+)\/?$/i, 'xiaohongshu']
   ];
 
   for (const [pattern, platform] of rules) {
     const match = content.match(pattern);
-    if (match) return { platform, username: decodeURIComponent(match[1]) };
+    if (match) return { platform, username: match[1] };
   }
 
   if (content) return { platform: 'custom', customUrl: content };
@@ -26,19 +26,21 @@ const parseSocial = (content) => {
 
 const parseVCard = (content) => {
   const data = {};
+  let formattedName = '';
+  let structuredName = null;
   const lines = content.split(/\r?\n/);
+
   lines.forEach((line) => {
-    const [key, ...rest] = line.split(':');
+    const [rawKey, ...rest] = line.split(':');
+    const key = (rawKey || '').trim();
     const value = rest.join(':').trim();
-    if (!key || !value) return;
+    if (!key) return;
     if (key === 'FN') {
-      const [firstName, ...lastParts] = value.split(' ');
-      data.firstName = firstName || '';
-      data.lastName = lastParts.join(' ');
-    } else if (key.startsWith('N')) {
-      const [lastName, firstName] = value.split(';');
-      if (firstName) data.firstName = firstName;
-      if (lastName) data.lastName = lastName;
+      formattedName = value;
+    } else if (key === 'N' || key.startsWith('N;')) {
+      structuredName = value;
+    } else if (!value) {
+      return;
     } else if (key.startsWith('ORG')) data.organization = value;
     else if (key.startsWith('TITLE')) data.title = value;
     else if (key.startsWith('TEL')) data.phone = value;
@@ -49,6 +51,19 @@ const parseVCard = (content) => {
       data.address = parts[2] || value;
     }
   });
+
+  if (formattedName) {
+    const [firstName, ...lastParts] = formattedName.split(' ');
+    data.firstName = firstName || '';
+    data.lastName = lastParts.join(' ');
+  }
+
+  if (structuredName !== null) {
+    const [lastName = '', firstName = ''] = structuredName.split(';');
+    data.lastName = lastName;
+    data.firstName = firstName;
+  }
+
   return data;
 };
 
