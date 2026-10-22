@@ -31,6 +31,8 @@ const escapeVCard = (value) =>
     .replace(/;/g, '\\;')
     .replace(/,/g, '\\,');
 
+const escapeVCardUri = (value) => String(value || '').replace(/[\r\n]+/g, '');
+
 const unescapeVCard = (value) => {
   let out = '';
   for (let i = 0; i < value.length; i += 1) {
@@ -146,7 +148,7 @@ const generateVCard = (data) => {
   if (data.title) lines.push(`TITLE:${text(data.title)}`);
   if (data.phone) lines.push(`TEL:${text(data.phone)}`);
   if (data.email) lines.push(`EMAIL:${text(data.email)}`);
-  if (data.website) lines.push(`URL:${text(data.website)}`);
+  if (data.website) lines.push(`URL:${escapeVCardUri(data.website)}`);
   if (data.address) lines.push(`ADR:;;${text(data.address)};;;;`);
   if (lines.length === 0) return '';
   return ['BEGIN:VCARD', 'VERSION:3.0', ...lines, 'END:VCARD'].join('\n');
