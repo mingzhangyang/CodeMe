@@ -20,12 +20,20 @@ const canvasToBlob = (canvas) =>
   });
 
 const fillTextEllipsis = (ctx, text, maxWidth) => {
-  if (ctx.measureText(text).width <= maxWidth) return text;
-  let trimmed = text;
-  while (trimmed.length > 1 && ctx.measureText(`${trimmed}…`).width > maxWidth) {
-    trimmed = trimmed.slice(0, -1);
+  const value = text.length > 240 ? text.slice(0, 240) : text;
+  if (ctx.measureText(value).width <= maxWidth) return value;
+  if (ctx.measureText('…').width > maxWidth) return '';
+
+  let low = 0;
+  let high = value.length;
+  while (low < high) {
+    const mid = Math.ceil((low + high) / 2);
+    const candidate = `${value.slice(0, mid)}…`;
+    if (ctx.measureText(candidate).width <= maxWidth) low = mid;
+    else high = mid - 1;
   }
-  return `${trimmed}…`;
+
+  return low === 0 ? '…' : `${value.slice(0, low)}…`;
 };
 
 /**

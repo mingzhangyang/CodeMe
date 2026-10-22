@@ -154,19 +154,25 @@ const generateVCard = (data) => {
   return ['BEGIN:VCARD', 'VERSION:3.0', ...lines, 'END:VCARD'].join('\n');
 };
 
+const normalizeHandle = (value) => (value || '').trim().replace(/^@+/, '');
+
 const formatXiaohongshu = (username) => {
   const value = (username || '').trim();
   if (!value) return '';
   if (/^https?:\/\//i.test(value)) return value;
-  return `https://www.xiaohongshu.com/user/profile/${value.replace(/^@/, '')}`;
+  const handle = value.replace(/^@+/, '');
+  if (!handle) return '';
+  return `https://www.xiaohongshu.com/user/profile/${handle}`;
 };
 
 const generateSocialContent = (data) => {
   if (!data.platform) return '';
-  if (data.platform === 'custom') return data.customUrl || '';
-  if (!data.username) return '';
+  if (data.platform === 'custom') return (data.customUrl || '').trim();
+  if (data.platform === 'xiaohongshu') return formatXiaohongshu(data.username);
 
-  const username = data.username.trim().replace(/^@/, '');
+  const username = normalizeHandle(data.username);
+  if (!username) return '';
+
   const platforms = {
     instagram: `https://instagram.com/${username}`,
     twitter: `https://x.com/${username}`,
@@ -174,8 +180,7 @@ const generateSocialContent = (data) => {
     tiktok: `https://tiktok.com/@${username}`,
     youtube: `https://youtube.com/@${username}`,
     github: `https://github.com/${username}`,
-    wechat: `WeChat ID: ${username}`,
-    xiaohongshu: formatXiaohongshu(data.username)
+    wechat: `WeChat ID: ${username}`
   };
   return platforms[data.platform] || '';
 };

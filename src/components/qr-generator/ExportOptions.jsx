@@ -100,6 +100,7 @@ const ExportOptions = ({ qrConfig, onStyleChange }) => {
               type="text"
               value={qrConfig.cardName || ''}
               onChange={(e) => onStyleChange('cardName', e.target.value)}
+              maxLength={120}
               placeholder="Name"
               className="w-full p-2 border border-gray-300 rounded-lg"
             />
@@ -109,6 +110,7 @@ const ExportOptions = ({ qrConfig, onStyleChange }) => {
               type="text"
               value={qrConfig.cardSubtitle || ''}
               onChange={(e) => onStyleChange('cardSubtitle', e.target.value)}
+              maxLength={120}
               placeholder="Subtitle"
               className="w-full p-2 border border-gray-300 rounded-lg"
             />

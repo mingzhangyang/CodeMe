@@ -55,6 +55,7 @@ const useQRCode = () => {
   };
 
   const updateStyle = (property, value) => {
+    if (Object.is(qrConfig[property], value)) return;
     setQrConfig((prev) => ({ ...prev, [property]: value }));
     markEdited();
   };

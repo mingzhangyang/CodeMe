@@ -51,6 +51,13 @@ export const designSignature = (stored) => {
   });
 };
 
+export const configMatchesItem = (config, item) => {
+  if (!item) return false;
+  const { config: stored } = serializeConfig(config);
+  return item.signature === designSignature(stored)
+    && (item.config?.logo?.url || null) === (stored.logo?.url || null);
+};
+
 const readHistory = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);

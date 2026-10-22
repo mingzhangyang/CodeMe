@@ -5,7 +5,7 @@ import ContentInputs from '../components/qr-generator/ContentInputs';
 import StyleOptions from '../components/qr-generator/StyleOptions';
 import ExportOptions from '../components/qr-generator/ExportOptions';
 import useQRCode from '../hooks/useQRCode';
-import useQRHistory from '../hooks/useQRHistory';
+import useQRHistory, { configMatchesItem } from '../hooks/useQRHistory';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 import useDebounce from '../hooks/useDebounce';
 import { configFromSample, getSample } from '../data/samples';
@@ -105,6 +105,14 @@ const Generator = () => {
     flushPendingSave();
     applyConfig(item.config);
     setFormEpoch((epoch) => epoch + 1);
+  };
+
+  const deleteSaved = (item) => {
+    const pending = pendingSave.current;
+    if (pending && pending.version > skipSaveThrough.current && configMatchesItem(pending.snapshot, item)) {
+      pendingSave.current = null;
+    }
+    remove(item.id);
   };
 
   const hasContent = Boolean(qrConfig.content && qrConfig.content.trim());
@@ -211,7 +219,7 @@ const Generator = () => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => remove(item.id)}
+                        onClick={() => deleteSaved(item)}
                         className="text-sm text-gray-500 hover:text-red-600 px-2 py-2"
                         aria-label="Delete saved design"
                       >
