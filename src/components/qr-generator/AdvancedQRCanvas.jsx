@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { renderStyledQR, drawErrorMessage } from '../../utils/qrRenderer';
 
 const AdvancedQRCanvas = ({
-  content = 'Hello World',
+  content = '',
   size = 256,
   backgroundColor = '#ffffff',
   foregroundColor = '#000000',
@@ -11,9 +11,10 @@ const AdvancedQRCanvas = ({
   cornerStyle = 'square',
   backgroundPattern = 'solid',
   gradientDirection = 'diagonal',
-  gradientEndColor = '#000000',
+  gradientEndColor = '#bfdbfe',
   logo = null,
-  logoSize = 0.2
+  logoSize = 0.2,
+  compact = false
 }) => {
   const canvasRef = useRef(null);
 
@@ -65,13 +66,11 @@ const AdvancedQRCanvas = ({
             ? `QR code preview for: ${content.substring(0, 80)}`
             : 'QR code preview placeholder'
         }
-        className="border border-gray-200 rounded-lg shadow-sm"
-        style={{ maxWidth: '100%', height: 'auto' }}
+        className="border border-gray-200 rounded-lg shadow-sm bg-white"
+        style={{ width: compact ? size : undefined, maxWidth: '100%', height: 'auto' }}
       />
-      {!hasContent && (
-        <p className="text-sm text-gray-500 mt-2">
-          Enter content to generate QR code
-        </p>
+      {!hasContent && !compact && (
+        <p className="text-sm text-gray-500 mt-2">Add a link to preview</p>
       )}
     </div>
   );

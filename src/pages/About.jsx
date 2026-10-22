@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import useDocumentMeta from '../hooks/useDocumentMeta';
 
 const About = () => {
@@ -18,10 +19,9 @@ const About = () => {
 
           <div className="bg-white rounded-lg shadow-md p-6 sm:p-8 mb-8">
             <h2 className="text-2xl font-semibold mb-4">What is CodeMe?</h2>
-            <p className="text-gray-600 mb-4">
-              CodeMe is a modern, user-friendly QR code generator designed for creators, 
-              professionals, and anyone who wants to share their digital presence with style. 
-              Create beautiful, personalized QR codes that stand out and represent your brand.
+            <p className="text-gray-600">
+              CodeMe is a QR code generator for creators and anyone who wants a code that looks like them.
+              Pick a link, a note, a social profile, or a contact card, style it, and download a PNG, SVG, or PDF.
             </p>
           </div>
 
@@ -29,58 +29,49 @@ const About = () => {
             <h2 className="text-2xl font-semibold mb-4">How to Use</h2>
             <div className="space-y-4">
               <div className="flex items-start">
-                <span className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-3 mt-0.5">1</span>
-                <p className="text-gray-600">Choose your content type (URL, text, social profile, or contact card)</p>
+                <span className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-3 mt-0.5 shrink-0">1</span>
+                <p className="text-gray-600">Choose a sample on the home page, or start from a blank URL, text, social profile, or contact card.</p>
               </div>
               <div className="flex items-start">
-                <span className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-3 mt-0.5">2</span>
-                <p className="text-gray-600">Enter your content and customize the appearance</p>
+                <span className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-3 mt-0.5 shrink-0">2</span>
+                <p className="text-gray-600">Adjust the preset, colors, shapes, and an optional logo. On a phone, the small preview stays on screen while you edit.</p>
               </div>
               <div className="flex items-start">
-                <span className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-3 mt-0.5">3</span>
-                <p className="text-gray-600">Preview your QR code in real-time</p>
+                <span className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-3 mt-0.5 shrink-0">3</span>
+                <p className="text-gray-600">Download a PNG, or share it. SVG and PDF are there when you need them. A card frame can add your name.</p>
               </div>
               <div className="flex items-start">
-                <span className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-3 mt-0.5">4</span>
-                <p className="text-gray-600">Download in your preferred format (PNG, SVG, or PDF)</p>
+                <span className="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-3 mt-0.5 shrink-0">4</span>
+                <p className="text-gray-600">Recent designs stay in this browser, so a refresh does not throw the work away.</p>
               </div>
             </div>
+            <Link to="/generator" className="btn-primary inline-block mt-6">
+              Open the generator
+            </Link>
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6 sm:p-8 mb-8">
-            <h2 className="text-2xl font-semibold mb-4">Privacy & Security</h2>
+            <h2 className="text-2xl font-semibold mb-4">Privacy</h2>
             <p className="text-gray-600 mb-4">
-              Your privacy is important to us. All QR code generation happens directly in your browser - 
-              your data never leaves your device unless you explicitly choose to save it to the cloud.
+              QR codes are generated in your browser. The link, text, or contact details you type are not uploaded.
+              Recent designs and uploaded logos are stored only in local storage on this device.
             </p>
             <p className="text-gray-600">
-              We don't track your QR code content or store any personal information without your consent.
+              The site uses Google Analytics to count page views. That measurement does not include the contents of your QR codes.
             </p>
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6 sm:p-8">
-            <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
+            <h2 className="text-2xl font-semibold mb-4">Contact</h2>
             <p className="text-gray-600 mb-4">
-              Have questions, feedback, or need support? We'd love to hear from you!
+              Questions, bugs, or an idea for the next preset — write anytime.
             </p>
-            <div className="space-y-3">
-              <div className="flex items-center">
-                <span className="text-blue-600 mr-3">📧</span>
-                <a 
-                  href="mailto:contact@orangely.xyz" 
-                  className="text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  contact@orangely.xyz
-                </a>
-              </div>
-              <div className="flex items-start">
-                <span className="text-blue-600 mr-3 mt-0.5">💡</span>
-                <p className="text-gray-600">
-                  Whether you have feature requests, bug reports, or just want to say hello, 
-                  we're here to help make CodeMe better for everyone.
-                </p>
-              </div>
-            </div>
+            <a
+              href="mailto:contact@orangely.xyz"
+              className="text-blue-600 hover:text-blue-800 font-medium"
+            >
+              contact@orangely.xyz
+            </a>
           </div>
         </div>
       </div>
