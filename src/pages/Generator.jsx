@@ -33,6 +33,7 @@ const Generator = () => {
   const { items, remember, remove, clear } = useQRHistory();
   const configRef = useRef(qrConfig);
   const skipSaveThrough = useRef(0);
+  const pendingSave = useRef(null);
   configRef.current = qrConfig;
 
   const sampleId = searchParams.get('sample');
@@ -40,9 +41,14 @@ const Generator = () => {
   useEffect(() => {
     const sample = getSample(sampleId);
     if (!sample) return;
-    applyConfig(configFromSample(sample));
+    const pending = pendingSave.current;
+    if (pending && pending.version > skipSaveThrough.current && pending.snapshot.content?.trim()) {
+      pendingSave.current = null;
+      remember(pending.snapshot);
+    }
+    applyConfig(configFromSample(sample), { persist: true });
     setFormEpoch((epoch) => epoch + 1);
-  }, [sampleId, applyConfig]);
+  }, [sampleId, applyConfig, remember]);
 
   const previewContent = useDebounce(qrConfig.content, 300);
 
@@ -50,16 +56,38 @@ const Generator = () => {
     if (revision === 0) return undefined;
     const version = revision;
     const snapshot = configRef.current;
+    if (version <= skipSaveThrough.current || !snapshot.content || !snapshot.content.trim()) {
+      pendingSave.current = null;
+      return undefined;
+    }
+    pendingSave.current = { version, snapshot };
     const timer = setTimeout(() => {
+      if (pendingSave.current?.version !== version) return;
       if (version <= skipSaveThrough.current) return;
-      if (!snapshot.content || !snapshot.content.trim()) return;
+      pendingSave.current = null;
       remember(snapshot);
     }, 800);
     return () => clearTimeout(timer);
   }, [revision, remember]);
 
+  useEffect(() => {
+    const flush = () => {
+      const pending = pendingSave.current;
+      if (!pending || pending.version <= skipSaveThrough.current) return;
+      pendingSave.current = null;
+      if (!pending.snapshot.content || !pending.snapshot.content.trim()) return;
+      remember(pending.snapshot);
+    };
+    window.addEventListener('pagehide', flush);
+    return () => {
+      window.removeEventListener('pagehide', flush);
+      flush();
+    };
+  }, [remember]);
+
   const clearHistory = () => {
     skipSaveThrough.current = revision;
+    pendingSave.current = null;
     clear();
   };
 

@@ -69,8 +69,9 @@ const useQRCode = () => {
     markEdited();
   };
 
-  const applyConfig = useCallback((partial) => {
+  const applyConfig = useCallback((partial, options) => {
     setQrConfig((prev) => ({ ...prev, ...partial }));
+    if (options?.persist) setRevision((value) => value + 1);
   }, []);
 
   const resetConfig = () => {
