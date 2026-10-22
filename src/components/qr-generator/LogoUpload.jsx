@@ -136,10 +136,12 @@ const LogoUpload = ({ currentLogo, logoSize, onLogoChange, onLogoSizeChange }) =
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
-                  {currentLogo.file?.name || 'Uploaded logo'}
+                  {currentLogo.file?.name || currentLogo.name || 'Uploaded logo'}
                 </p>
                 <p className="text-sm text-gray-500">
-                  {currentLogo.width} × {currentLogo.height}px
+                  {currentLogo.width && currentLogo.height
+                    ? `${currentLogo.width} × ${currentLogo.height}px`
+                    : 'Embedded mark'}
                 </p>
               </div>
               <button

@@ -1,5 +1,9 @@
 # Development Plan: Personalized Social QR Code Generator (CodeMe)
 
+> Status (2026-10): the MVP generator is shipped at https://codeme.orangely.xyz.
+> A polish pass added homepage samples, a pinned phone preview, one primary PNG download plus share, visual presets, honest privacy copy, on-device history, and an optional card frame.
+> Still later: accounts, short links, scan analytics, AI styles, and background-image uploads.
+
 ## 📋 Project Overview
 
 **Product Name**: CodeMe - Personalized Social QR Code Generator  

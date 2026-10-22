@@ -1,12 +1,23 @@
-# React + Vite
+# CodeMe
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Free, privacy-first QR code generator. Create codes for links, text, social profiles, and contact cards. Customize colors, shapes, and a logo, then export PNG, SVG, or PDF — including an optional name card. Generation runs entirely in the browser.
 
-Currently, two official plugins are available:
+Live site: https://codeme.orangely.xyz
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Develop
 
-## Expanding the ESLint configuration
+```bash
+npm install
+npm run dev
+npm run build
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## What it does
+
+- Content: URL, text, social profiles (Instagram, X, LinkedIn, TikTok, YouTube, GitHub, WeChat ID, Xiaohongshu), and vCard
+- Style presets, colors, dot and corner shapes, gradient or dotted backgrounds, centered logo
+- Phone-friendly live preview, PNG share sheet when the browser supports it
+- Recent designs saved in `localStorage` on this device (no account)
+- Page views are measured with Google Analytics; QR content is not sent
+
+Made by [Orangely](mailto:contact@orangely.xyz).

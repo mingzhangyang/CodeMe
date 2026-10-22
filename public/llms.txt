@@ -13,12 +13,15 @@
 
 ## Features
 
-- Content types: website URL, text message, social profile (Instagram, Twitter/X, LinkedIn, TikTok, YouTube, GitHub), and vCard contact card (name, organization, title, phone, email, website, address)
+- Content types: website URL, text message, social profile (Instagram, X, LinkedIn, TikTok, YouTube, GitHub, WeChat ID as plain text, Xiaohongshu profile link), and vCard contact card (name, organization, title, phone, email, website, address)
 - Styling: foreground/background colors, gradient backgrounds and directions, dot shapes (square, circle, rounded, diamond), corner shapes (square, circle, rounded), and style presets (Classic, Modern, Playful, Professional)
 - Logo embedding: upload an image (PNG, JPG, SVG up to 5MB) and control its size (15%–30%)
-- Real-time preview rendered on an HTML canvas
-- Export formats: PNG (web and social), SVG (scalable vector), and PDF (print), at multiple sizes
-- Error correction levels for reliable scanning
+- Real-time preview rendered on an HTML canvas, with a compact preview that stays visible on small screens
+- Export formats: PNG (web and social, with a system share sheet when the browser supports file sharing), SVG (scalable vector), and PDF (print), at multiple sizes
+- Optional card frame on download: a name and subtitle around the code
+- Recent designs saved in the browser's local storage only (no account)
+- Error correction levels for reliable scanning; a logo forces the highest level
+- Privacy: QR content is not uploaded. Page views are measured with Google Analytics.
 
 ## Pages
 

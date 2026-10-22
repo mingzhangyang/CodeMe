@@ -1,91 +1,132 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-const ContentInputs = ({ contentType, onContentChange }) => {
-  const [formData, setFormData] = useState({});
+const parseSocial = (content) => {
+  if (content.startsWith('WeChat ID:')) {
+    return { platform: 'wechat', username: content.replace(/^WeChat ID:\s*/, '') };
+  }
 
-  // Reset form data when content type changes
-  useEffect(() => {
-    setFormData({});
-    onContentChange('');
-  }, [contentType]);
+  const rules = [
+    [/instagram\.com\/([^/?#]+)/i, 'instagram'],
+    [/(?:twitter\.com|x\.com)\/([^/?#]+)/i, 'twitter'],
+    [/linkedin\.com\/in\/([^/?#]+)/i, 'linkedin'],
+    [/tiktok\.com\/@?([^/?#]+)/i, 'tiktok'],
+    [/youtube\.com\/@([^/?#]+)/i, 'youtube'],
+    [/github\.com\/([^/?#]+)/i, 'github'],
+    [/xiaohongshu\.com\/user\/profile\/([^/?#]+)/i, 'xiaohongshu']
+  ];
+
+  for (const [pattern, platform] of rules) {
+    const match = content.match(pattern);
+    if (match) return { platform, username: decodeURIComponent(match[1]) };
+  }
+
+  if (content) return { platform: 'custom', customUrl: content };
+  return {};
+};
+
+const parseVCard = (content) => {
+  const data = {};
+  const lines = content.split(/\r?\n/);
+  lines.forEach((line) => {
+    const [key, ...rest] = line.split(':');
+    const value = rest.join(':').trim();
+    if (!key || !value) return;
+    if (key === 'FN') {
+      const [firstName, ...lastParts] = value.split(' ');
+      data.firstName = firstName || '';
+      data.lastName = lastParts.join(' ');
+    } else if (key.startsWith('N')) {
+      const [lastName, firstName] = value.split(';');
+      if (firstName) data.firstName = firstName;
+      if (lastName) data.lastName = lastName;
+    } else if (key.startsWith('ORG')) data.organization = value;
+    else if (key.startsWith('TITLE')) data.title = value;
+    else if (key.startsWith('TEL')) data.phone = value;
+    else if (key.startsWith('EMAIL')) data.email = value;
+    else if (key.startsWith('URL')) data.website = value;
+    else if (key.startsWith('ADR')) {
+      const parts = value.split(';');
+      data.address = parts[2] || value;
+    }
+  });
+  return data;
+};
+
+const seedToForm = (contentType, seed = '') => {
+  if (!seed) return {};
+  if (contentType === 'url' || contentType === 'text') return { content: seed };
+  if (contentType === 'social') return parseSocial(seed);
+  if (contentType === 'vcard') return parseVCard(seed);
+  return {};
+};
+
+const generateVCard = (data) => {
+  const lines = [];
+  if (data.firstName || data.lastName) {
+    lines.push(`FN:${`${data.firstName || ''} ${data.lastName || ''}`.trim()}`);
+    lines.push(`N:${data.lastName || ''};${data.firstName || ''};;;`);
+  }
+  if (data.organization) lines.push(`ORG:${data.organization}`);
+  if (data.title) lines.push(`TITLE:${data.title}`);
+  if (data.phone) lines.push(`TEL:${data.phone}`);
+  if (data.email) lines.push(`EMAIL:${data.email}`);
+  if (data.website) lines.push(`URL:${data.website}`);
+  if (data.address) lines.push(`ADR:;;${data.address};;;;`);
+  if (lines.length === 0) return '';
+  return ['BEGIN:VCARD', 'VERSION:3.0', ...lines, 'END:VCARD'].join('\n');
+};
+
+const formatXiaohongshu = (username) => {
+  const value = (username || '').trim();
+  if (!value) return '';
+  if (/^https?:\/\//i.test(value)) return value;
+  return `https://www.xiaohongshu.com/user/profile/${value.replace(/^@/, '')}`;
+};
+
+const generateSocialContent = (data) => {
+  if (!data.platform) return '';
+  if (data.platform === 'custom') return data.customUrl || '';
+  if (!data.username) return '';
+
+  const username = data.username.trim().replace(/^@/, '');
+  const platforms = {
+    instagram: `https://instagram.com/${username}`,
+    twitter: `https://x.com/${username}`,
+    linkedin: `https://linkedin.com/in/${username}`,
+    tiktok: `https://tiktok.com/@${username}`,
+    youtube: `https://youtube.com/@${username}`,
+    github: `https://github.com/${username}`,
+    wechat: `WeChat ID: ${username}`,
+    xiaohongshu: formatXiaohongshu(data.username)
+  };
+  return platforms[data.platform] || '';
+};
+
+const generateFormattedContent = (type, data) => {
+  switch (type) {
+    case 'vcard':
+      return generateVCard(data);
+    case 'social':
+      return generateSocialContent(data);
+    case 'url':
+    case 'text':
+    default:
+      return data.content || '';
+  }
+};
+
+const fieldClass =
+  'w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent';
+
+const ContentInputs = ({ contentType, seed = '', onContentChange }) => {
+  const [formData, setFormData] = useState(() => seedToForm(contentType, seed));
 
   const handleInputChange = (field, value) => {
-    const newFormData = { ...formData, [field]: value };
-    setFormData(newFormData);
-    
-    // Generate formatted content based on type
-    const formattedContent = generateFormattedContent(contentType, newFormData);
-    onContentChange(formattedContent);
+    const next = { ...formData, [field]: value };
+    setFormData(next);
+    onContentChange(generateFormattedContent(contentType, next));
   };
 
-  const generateFormattedContent = (type, data) => {
-    switch (type) {
-      case 'vcard':
-        return generateVCard(data);
-      case 'social':
-        return generateSocialContent(data);
-      case 'url':
-      case 'text':
-      default:
-        return data.content || '';
-    }
-  };
-
-  const generateVCard = (data) => {
-    const vcard = [];
-    vcard.push('BEGIN:VCARD');
-    vcard.push('VERSION:3.0');
-    
-    if (data.firstName || data.lastName) {
-      vcard.push(`FN:${data.firstName || ''} ${data.lastName || ''}`.trim());
-      vcard.push(`N:${data.lastName || ''};${data.firstName || ''};;;`);
-    }
-    
-    if (data.organization) {
-      vcard.push(`ORG:${data.organization}`);
-    }
-    
-    if (data.title) {
-      vcard.push(`TITLE:${data.title}`);
-    }
-    
-    if (data.phone) {
-      vcard.push(`TEL:${data.phone}`);
-    }
-    
-    if (data.email) {
-      vcard.push(`EMAIL:${data.email}`);
-    }
-    
-    if (data.website) {
-      vcard.push(`URL:${data.website}`);
-    }
-    
-    if (data.address) {
-      vcard.push(`ADR:;;${data.address};;;;`);
-    }
-    
-    vcard.push('END:VCARD');
-    return vcard.join('\n');
-  };
-
-  const generateSocialContent = (data) => {
-    if (data.platform && data.username) {
-      const platforms = {
-        instagram: `https://instagram.com/${data.username}`,
-        twitter: `https://twitter.com/${data.username}`,
-        linkedin: `https://linkedin.com/in/${data.username}`,
-        tiktok: `https://tiktok.com/@${data.username}`,
-        youtube: `https://youtube.com/@${data.username}`,
-        github: `https://github.com/${data.username}`,
-        custom: data.customUrl || ''
-      };
-      return platforms[data.platform] || data.customUrl || '';
-    }
-    return '';
-  };
-
-  // Render different input forms based on content type
   const renderInputs = () => {
     switch (contentType) {
       case 'url':
@@ -97,7 +138,7 @@ const ContentInputs = ({ contentType, onContentChange }) => {
             <input
               id="ci-url"
               type="url"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={fieldClass}
               placeholder="https://example.com"
               value={formData.content || ''}
               onChange={(e) => handleInputChange('content', e.target.value)}
@@ -113,7 +154,7 @@ const ContentInputs = ({ contentType, onContentChange }) => {
             </label>
             <textarea
               id="ci-text"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={fieldClass}
               rows="3"
               placeholder="Enter your message here..."
               value={formData.content || ''}
@@ -131,37 +172,49 @@ const ContentInputs = ({ contentType, onContentChange }) => {
               </label>
               <select
                 id="ci-platform"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={fieldClass}
                 value={formData.platform || ''}
                 onChange={(e) => handleInputChange('platform', e.target.value)}
               >
                 <option value="">Select platform</option>
                 <option value="instagram">Instagram</option>
-                <option value="twitter">Twitter</option>
+                <option value="twitter">X (Twitter)</option>
                 <option value="linkedin">LinkedIn</option>
                 <option value="tiktok">TikTok</option>
                 <option value="youtube">YouTube</option>
                 <option value="github">GitHub</option>
+                <option value="wechat">WeChat</option>
+                <option value="xiaohongshu">Xiaohongshu</option>
                 <option value="custom">Custom URL</option>
               </select>
             </div>
-            
+
             {formData.platform && formData.platform !== 'custom' && (
               <div>
                 <label htmlFor="ci-username" className="block text-sm font-medium text-gray-700 mb-2">
-                  Username
+                  {formData.platform === 'wechat' ? 'WeChat ID' : 'Username or profile ID'}
                 </label>
                 <input
                   id="ci-username"
                   type="text"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="username"
+                  className={fieldClass}
+                  placeholder={formData.platform === 'xiaohongshu' ? 'profile ID or full URL' : 'username'}
                   value={formData.username || ''}
                   onChange={(e) => handleInputChange('username', e.target.value)}
                 />
+                {formData.platform === 'wechat' && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Encoded as text (“WeChat ID: …”). A scanner shows the ID; it does not open WeChat.
+                  </p>
+                )}
+                {formData.platform === 'xiaohongshu' && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Paste a profile URL, or a profile ID. A plain name becomes a profile link and only works if that ID is correct.
+                  </p>
+                )}
               </div>
             )}
-            
+
             {formData.platform === 'custom' && (
               <div>
                 <label htmlFor="ci-custom-url" className="block text-sm font-medium text-gray-700 mb-2">
@@ -170,7 +223,7 @@ const ContentInputs = ({ contentType, onContentChange }) => {
                 <input
                   id="ci-custom-url"
                   type="url"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={fieldClass}
                   placeholder="https://your-profile-url.com"
                   value={formData.customUrl || ''}
                   onChange={(e) => handleInputChange('customUrl', e.target.value)}
@@ -191,8 +244,8 @@ const ContentInputs = ({ contentType, onContentChange }) => {
                 <input
                   id="ci-first-name"
                   type="text"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="John"
+                  className={fieldClass}
+                  placeholder="Ada"
                   value={formData.firstName || ''}
                   onChange={(e) => handleInputChange('firstName', e.target.value)}
                 />
@@ -204,14 +257,14 @@ const ContentInputs = ({ contentType, onContentChange }) => {
                 <input
                   id="ci-last-name"
                   type="text"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Doe"
+                  className={fieldClass}
+                  placeholder="Lovelace"
                   value={formData.lastName || ''}
                   onChange={(e) => handleInputChange('lastName', e.target.value)}
                 />
               </div>
             </div>
-            
+
             <div>
               <label htmlFor="ci-organization" className="block text-sm font-medium text-gray-700 mb-2">
                 Organization
@@ -219,13 +272,13 @@ const ContentInputs = ({ contentType, onContentChange }) => {
               <input
                 id="ci-organization"
                 type="text"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={fieldClass}
                 placeholder="Company Name"
                 value={formData.organization || ''}
                 onChange={(e) => handleInputChange('organization', e.target.value)}
               />
             </div>
-            
+
             <div>
               <label htmlFor="ci-title" className="block text-sm font-medium text-gray-700 mb-2">
                 Job Title
@@ -233,14 +286,14 @@ const ContentInputs = ({ contentType, onContentChange }) => {
               <input
                 id="ci-title"
                 type="text"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={fieldClass}
                 placeholder="Software Developer"
                 value={formData.title || ''}
                 onChange={(e) => handleInputChange('title', e.target.value)}
               />
             </div>
-            
-            <div className="grid grid-cols-2 gap-4">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="ci-phone" className="block text-sm font-medium text-gray-700 mb-2">
                   Phone
@@ -248,7 +301,7 @@ const ContentInputs = ({ contentType, onContentChange }) => {
                 <input
                   id="ci-phone"
                   type="tel"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={fieldClass}
                   placeholder="+1 (555) 123-4567"
                   value={formData.phone || ''}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
@@ -261,14 +314,14 @@ const ContentInputs = ({ contentType, onContentChange }) => {
                 <input
                   id="ci-email"
                   type="email"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="john@example.com"
+                  className={fieldClass}
+                  placeholder="ada@example.com"
                   value={formData.email || ''}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                 />
               </div>
             </div>
-            
+
             <div>
               <label htmlFor="ci-website" className="block text-sm font-medium text-gray-700 mb-2">
                 Website
@@ -276,20 +329,20 @@ const ContentInputs = ({ contentType, onContentChange }) => {
               <input
                 id="ci-website"
                 type="url"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="https://johndoe.com"
+                className={fieldClass}
+                placeholder="https://example.com"
                 value={formData.website || ''}
                 onChange={(e) => handleInputChange('website', e.target.value)}
               />
             </div>
-            
+
             <div>
               <label htmlFor="ci-address" className="block text-sm font-medium text-gray-700 mb-2">
                 Address
               </label>
               <textarea
                 id="ci-address"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={fieldClass}
                 rows="2"
                 placeholder="123 Main St, City, State 12345"
                 value={formData.address || ''}
@@ -306,9 +359,7 @@ const ContentInputs = ({ contentType, onContentChange }) => {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Content
-      </label>
+      <p className="block text-sm font-medium text-gray-700 mb-2">Content</p>
       {renderInputs()}
     </div>
   );
