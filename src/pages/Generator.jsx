@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AdvancedQRCanvas from '../components/qr-generator/AdvancedQRCanvas';
 import ContentInputs from '../components/qr-generator/ContentInputs';
@@ -38,17 +38,21 @@ const Generator = () => {
 
   const sampleId = searchParams.get('sample');
 
+  const flushPendingSave = useCallback(() => {
+    const pending = pendingSave.current;
+    if (!pending || pending.version <= skipSaveThrough.current) return;
+    pendingSave.current = null;
+    if (!pending.snapshot.content || !pending.snapshot.content.trim()) return;
+    remember(pending.snapshot);
+  }, [remember]);
+
   useEffect(() => {
     const sample = getSample(sampleId);
     if (!sample) return;
-    const pending = pendingSave.current;
-    if (pending && pending.version > skipSaveThrough.current && pending.snapshot.content?.trim()) {
-      pendingSave.current = null;
-      remember(pending.snapshot);
-    }
+    flushPendingSave();
     applyConfig(configFromSample(sample), { persist: true });
     setFormEpoch((epoch) => epoch + 1);
-  }, [sampleId, applyConfig, remember]);
+  }, [sampleId, applyConfig, flushPendingSave]);
 
   const previewContent = useDebounce(qrConfig.content, 300);
 
@@ -92,11 +96,13 @@ const Generator = () => {
   };
 
   const handleContentTypeChange = (event) => {
+    flushPendingSave();
     updateContentType(event.target.value);
     setFormEpoch((epoch) => epoch + 1);
   };
 
   const restore = (item) => {
+    flushPendingSave();
     applyConfig(item.config);
     setFormEpoch((epoch) => epoch + 1);
   };
