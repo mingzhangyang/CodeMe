@@ -45,7 +45,7 @@ const Home = () => {
                   config={{
                     ...sample.style,
                     logo: sample.logo,
-                    logoSize: 0.22
+                    logoSize: 0.2
                   }}
                 />
                 <h3 className="mt-3 font-semibold text-gray-900">{sample.title}</h3>

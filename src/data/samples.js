@@ -94,7 +94,7 @@ export const configFromSample = (sample) => ({
   contentType: sample.contentType,
   ...sample.style,
   logo: sample.logo || null,
-  logoSize: sample.logo ? 0.22 : 0.2,
+  logoSize: 0.2,
   cardEnabled: Boolean(sample.cardEnabled),
   cardName: sample.cardName || '',
   cardSubtitle: sample.cardSubtitle || ''

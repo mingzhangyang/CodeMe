@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'codeme.history.v1';
 const MAX_ITEMS = 12;
@@ -64,52 +64,58 @@ const readHistory = () => {
 const useQRHistory = () => {
   const [items, setItems] = useState(readHistory);
 
+  useEffect(() => {
+    const onStorage = (event) => {
+      if (event.key !== STORAGE_KEY) return;
+      setItems(readHistory());
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
   const remember = useCallback((config) => {
     if (!config?.content || !config.content.trim()) return;
     const { config: stored, logoOmitted } = serializeConfig(config);
     const signature = designSignature(stored);
-    setItems((prev) => {
-      const sameDesign = (item) =>
-        item.signature === signature &&
-        (item.config?.logo?.url || null) === (stored.logo?.url || null);
-      const next = [
-        {
-          id: `${Date.now()}`,
-          savedAt: Date.now(),
-          signature,
-          logoOmitted,
-          config: stored
-        },
-        ...prev.filter((item) => !sameDesign(item))
-      ].slice(0, MAX_ITEMS);
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch {
-        return prev;
-      }
-      return next;
-    });
+    const prev = readHistory();
+    const sameDesign = (item) =>
+      item.signature === signature &&
+      (item.config?.logo?.url || null) === (stored.logo?.url || null);
+    const next = [
+      {
+        id: `${Date.now()}`,
+        savedAt: Date.now(),
+        signature,
+        logoOmitted,
+        config: stored
+      },
+      ...prev.filter((item) => !sameDesign(item))
+    ].slice(0, MAX_ITEMS);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      return;
+    }
+    setItems(next);
   }, []);
 
   const remove = useCallback((id) => {
-    setItems((prev) => {
-      const next = prev.filter((item) => item.id !== id);
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch {
-        return prev;
-      }
-      return next;
-    });
+    const next = readHistory().filter((item) => item.id !== id);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      return;
+    }
+    setItems(next);
   }, []);
 
   const clear = useCallback(() => {
-    setItems([]);
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {
-      /* ignore quota / private mode */
+      return;
     }
+    setItems([]);
   }, []);
 
   return { items, remember, remove, clear };

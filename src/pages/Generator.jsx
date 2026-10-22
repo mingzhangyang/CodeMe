@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import AdvancedQRCanvas from '../components/qr-generator/AdvancedQRCanvas';
 import ContentInputs from '../components/qr-generator/ContentInputs';
@@ -30,6 +30,7 @@ const Generator = () => {
     applyConfig
   } = useQRCode();
   const { items, remember, remove, clear } = useQRHistory();
+  const blockedSave = useRef(null);
 
   const sampleId = searchParams.get('sample');
 
@@ -45,8 +46,17 @@ const Generator = () => {
 
   useEffect(() => {
     if (!persisted.content || !persisted.content.trim()) return;
+    if (blockedSave.current === persisted) {
+      blockedSave.current = null;
+      return;
+    }
     remember(persisted);
   }, [persisted, remember]);
+
+  const clearHistory = () => {
+    blockedSave.current = qrConfig;
+    clear();
+  };
 
   const handleContentTypeChange = (event) => {
     updateContentType(event.target.value);
@@ -137,7 +147,7 @@ const Generator = () => {
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-medium text-gray-700">Recent on this device</h3>
                 {items.length > 0 && (
-                  <button type="button" onClick={clear} className="text-xs text-gray-500 hover:text-gray-800">
+                  <button type="button" onClick={clearHistory} className="text-xs text-gray-500 hover:text-gray-800">
                     Clear
                   </button>
                 )}

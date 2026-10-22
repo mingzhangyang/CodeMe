@@ -129,8 +129,19 @@ export const shareAsPNG = async (qrConfig, size = 512, filename = 'qrcode.png') 
   }
 };
 
-export const canOfferFileShare = () =>
-  typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+export const canOfferFileShare = () => {
+  if (typeof navigator === 'undefined' || typeof navigator.canShare !== 'function') return false;
+  try {
+    const probe = new File(
+      [new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])],
+      'probe.png',
+      { type: 'image/png' }
+    );
+    return navigator.canShare({ files: [probe] });
+  } catch {
+    return false;
+  }
+};
 
 export const exportAsSVG = async (qrConfig, size = 512, filename = 'qrcode.svg') => {
   try {

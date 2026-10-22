@@ -34,7 +34,7 @@ const MiniQR = ({ config, content = 'https://codeme.orangely.xyz', size = 72, cl
       gradientEndColor: parsed.gradientEndColor,
       errorCorrectionLevel: parsed.errorCorrectionLevel,
       logo: parsed.logo ? { url: parsed.logo } : null,
-      logoSize: parsed.logoSize || 0.22
+      logoSize: parsed.logoSize || 0.2
     }).catch(() => {});
   }, [signature]);
 

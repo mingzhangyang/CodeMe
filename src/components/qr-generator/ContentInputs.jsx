@@ -24,13 +24,75 @@ const parseSocial = (content) => {
   return {};
 };
 
+const escapeVCard = (value) =>
+  String(value)
+    .replace(/\\/g, '\\\\')
+    .replace(/\r\n|\r|\n/g, '\\n')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,');
+
+const unescapeVCard = (value) => {
+  let out = '';
+  for (let i = 0; i < value.length; i += 1) {
+    if (value[i] === '\\' && i + 1 < value.length) {
+      const next = value[i + 1];
+      if (next === 'n' || next === 'N') out += '\n';
+      else if (next === ';') out += ';';
+      else if (next === ',') out += ',';
+      else if (next === '\\') out += '\\';
+      else out += next;
+      i += 1;
+    } else {
+      out += value[i];
+    }
+  }
+  return out;
+};
+
+const splitUnescaped = (value, separator) => {
+  const parts = [];
+  let current = '';
+  for (let i = 0; i < value.length; i += 1) {
+    if (value[i] === '\\' && i + 1 < value.length) {
+      current += value[i] + value[i + 1];
+      i += 1;
+    } else if (value[i] === separator) {
+      parts.push(current);
+      current = '';
+    } else {
+      current += value[i];
+    }
+  }
+  parts.push(current);
+  return parts;
+};
+
+const unfoldVCard = (content) => {
+  const property = /^(?:BEGIN|END|VERSION|FN|N|ORG|TITLE|TEL|EMAIL|URL|ADR)(?:;[^:]*)?:/i;
+  const lines = [];
+  content.split(/\r?\n/).forEach((line) => {
+    const folded = line.startsWith(' ') || line.startsWith('\t');
+    if (lines.length && (folded || !property.test(line))) {
+      lines[lines.length - 1] += folded ? line.slice(1) : `\n${line}`;
+      return;
+    }
+    lines.push(line);
+  });
+  return lines;
+};
+
+const parseAddress = (value) => {
+  const parts = splitUnescaped(value, ';');
+  const street = parts.length >= 7 ? parts.slice(2, parts.length - 4).join(';') : parts[2] || '';
+  return unescapeVCard(street);
+};
+
 const parseVCard = (content) => {
   const data = {};
   let formattedName = '';
   let structuredName = null;
-  const lines = content.split(/\r?\n/);
 
-  lines.forEach((line) => {
+  unfoldVCard(content).forEach((line) => {
     const [rawKey, ...rest] = line.split(':');
     const key = (rawKey || '').trim();
     const value = rest.join(':').trim();
@@ -41,27 +103,24 @@ const parseVCard = (content) => {
       structuredName = value;
     } else if (!value) {
       return;
-    } else if (key.startsWith('ORG')) data.organization = value;
-    else if (key.startsWith('TITLE')) data.title = value;
-    else if (key.startsWith('TEL')) data.phone = value;
-    else if (key.startsWith('EMAIL')) data.email = value;
-    else if (key.startsWith('URL')) data.website = value;
-    else if (key.startsWith('ADR')) {
-      const parts = value.split(';');
-      data.address = parts[2] || value;
-    }
+    } else if (key.startsWith('ORG')) data.organization = unescapeVCard(value);
+    else if (key.startsWith('TITLE')) data.title = unescapeVCard(value);
+    else if (key.startsWith('TEL')) data.phone = unescapeVCard(value);
+    else if (key.startsWith('EMAIL')) data.email = unescapeVCard(value);
+    else if (key.startsWith('URL')) data.website = unescapeVCard(value);
+    else if (key.startsWith('ADR')) data.address = parseAddress(value);
   });
 
   if (formattedName) {
-    const [firstName, ...lastParts] = formattedName.split(' ');
+    const [firstName, ...lastParts] = unescapeVCard(formattedName).split(' ');
     data.firstName = firstName || '';
     data.lastName = lastParts.join(' ');
   }
 
   if (structuredName !== null) {
-    const [lastName = '', firstName = ''] = structuredName.split(';');
-    data.lastName = lastName;
-    data.firstName = firstName;
+    const [lastName = '', firstName = ''] = splitUnescaped(structuredName, ';');
+    data.lastName = unescapeVCard(lastName);
+    data.firstName = unescapeVCard(firstName);
   }
 
   return data;
@@ -77,16 +136,18 @@ const seedToForm = (contentType, seed = '') => {
 
 const generateVCard = (data) => {
   const lines = [];
+  const text = (value) => escapeVCard(value || '');
   if (data.firstName || data.lastName) {
-    lines.push(`FN:${`${data.firstName || ''} ${data.lastName || ''}`.trim()}`);
-    lines.push(`N:${data.lastName || ''};${data.firstName || ''};;;`);
+    const formatted = `${data.firstName || ''} ${data.lastName || ''}`.trim();
+    lines.push(`FN:${text(formatted)}`);
+    lines.push(`N:${text(data.lastName)};${text(data.firstName)};;;`);
   }
-  if (data.organization) lines.push(`ORG:${data.organization}`);
-  if (data.title) lines.push(`TITLE:${data.title}`);
-  if (data.phone) lines.push(`TEL:${data.phone}`);
-  if (data.email) lines.push(`EMAIL:${data.email}`);
-  if (data.website) lines.push(`URL:${data.website}`);
-  if (data.address) lines.push(`ADR:;;${data.address};;;;`);
+  if (data.organization) lines.push(`ORG:${text(data.organization)}`);
+  if (data.title) lines.push(`TITLE:${text(data.title)}`);
+  if (data.phone) lines.push(`TEL:${text(data.phone)}`);
+  if (data.email) lines.push(`EMAIL:${text(data.email)}`);
+  if (data.website) lines.push(`URL:${text(data.website)}`);
+  if (data.address) lines.push(`ADR:;;${text(data.address)};;;;`);
   if (lines.length === 0) return '';
   return ['BEGIN:VCARD', 'VERSION:3.0', ...lines, 'END:VCARD'].join('\n');
 };
