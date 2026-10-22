@@ -16,7 +16,9 @@ html {
 body {
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  /* `hidden` computes overflow-y to auto and makes body the scroll
+     container, so position: sticky follows a box that does not scroll. */
+  overflow-x: clip;
 }
 
 /* Respect device safe areas (notches / home indicator) */

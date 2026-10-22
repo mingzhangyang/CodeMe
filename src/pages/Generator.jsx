@@ -22,6 +22,7 @@ const Generator = () => {
   const [formEpoch, setFormEpoch] = useState(0);
   const {
     qrConfig,
+    revision,
     updateContent,
     updateContentType,
     updateStyle,
@@ -30,7 +31,9 @@ const Generator = () => {
     applyConfig
   } = useQRCode();
   const { items, remember, remove, clear } = useQRHistory();
-  const blockedSave = useRef(null);
+  const configRef = useRef(qrConfig);
+  const skipSaveThrough = useRef(0);
+  configRef.current = qrConfig;
 
   const sampleId = searchParams.get('sample');
 
@@ -42,19 +45,21 @@ const Generator = () => {
   }, [sampleId, applyConfig]);
 
   const previewContent = useDebounce(qrConfig.content, 300);
-  const persisted = useDebounce(qrConfig, 800);
 
   useEffect(() => {
-    if (!persisted.content || !persisted.content.trim()) return;
-    if (blockedSave.current === persisted) {
-      blockedSave.current = null;
-      return;
-    }
-    remember(persisted);
-  }, [persisted, remember]);
+    if (revision === 0) return undefined;
+    const version = revision;
+    const snapshot = configRef.current;
+    const timer = setTimeout(() => {
+      if (version <= skipSaveThrough.current) return;
+      if (!snapshot.content || !snapshot.content.trim()) return;
+      remember(snapshot);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [revision, remember]);
 
   const clearHistory = () => {
-    blockedSave.current = qrConfig;
+    skipSaveThrough.current = revision;
     clear();
   };
 

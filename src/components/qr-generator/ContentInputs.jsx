@@ -109,7 +109,7 @@ const parseVCard = (content) => {
     else if (key.startsWith('TITLE')) data.title = unescapeVCard(value);
     else if (key.startsWith('TEL')) data.phone = unescapeVCard(value);
     else if (key.startsWith('EMAIL')) data.email = unescapeVCard(value);
-    else if (key.startsWith('URL')) data.website = unescapeVCard(value);
+    else if (key.startsWith('URL')) data.website = value;
     else if (key.startsWith('ADR')) data.address = parseAddress(value);
   });
 

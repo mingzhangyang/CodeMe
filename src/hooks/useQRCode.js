@@ -21,13 +21,18 @@ export const defaultQRConfig = {
 
 const useQRCode = () => {
   const [qrConfig, setQrConfig] = useState(defaultQRConfig);
+  const [revision, setRevision] = useState(0);
+
+  const markEdited = () => setRevision((value) => value + 1);
 
   const updateContent = (content) => {
     setQrConfig((prev) => ({ ...prev, content }));
+    markEdited();
   };
 
   const updateContentType = (contentType) => {
     setQrConfig((prev) => ({ ...prev, contentType, content: '' }));
+    markEdited();
   };
 
   const updateColors = (foregroundColor, backgroundColor) => {
@@ -36,26 +41,32 @@ const useQRCode = () => {
       foregroundColor: foregroundColor || prev.foregroundColor,
       backgroundColor: backgroundColor || prev.backgroundColor
     }));
+    markEdited();
   };
 
   const updateSize = (size) => {
     setQrConfig((prev) => ({ ...prev, size }));
+    markEdited();
   };
 
   const updateErrorCorrectionLevel = (level) => {
     setQrConfig((prev) => ({ ...prev, errorCorrectionLevel: level }));
+    markEdited();
   };
 
   const updateStyle = (property, value) => {
     setQrConfig((prev) => ({ ...prev, [property]: value }));
+    markEdited();
   };
 
   const updateLogo = (logo) => {
     setQrConfig((prev) => ({ ...prev, logo }));
+    markEdited();
   };
 
   const updateLogoSize = (logoSize) => {
     setQrConfig((prev) => ({ ...prev, logoSize }));
+    markEdited();
   };
 
   const applyConfig = useCallback((partial) => {
@@ -68,6 +79,7 @@ const useQRCode = () => {
 
   return {
     qrConfig,
+    revision,
     updateContent,
     updateContentType,
     updateColors,
